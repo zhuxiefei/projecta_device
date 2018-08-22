@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.returncust.dao.RoomsourceReturncustDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+		<![CDATA[
+		returnId,returnNo,returnTime,clientId,counselor,createTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertRoomsourceReturncust">
+		<![CDATA[
+	        INSERT INTO roomsource_returncust (
+	        	returnId,returnNo,returnTime,clientId,counselor,createTime
+	        ) VALUES (
+	        	#{returnId} ,
+	        	#{returnNo} ,
+	        	now() ,
+	        	#{clientId} ,
+	        	#{counselor} ,
+	        	now()
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertRoomsourceReturncustBatch">
+		<![CDATA[
+	        INSERT INTO roomsource_returncust (
+	        	returnId,returnNo,returnTime,clientId,counselor,createTime
+	        ) VALUES
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+			#{item.returnId} ,
+			#{item.returnNo} ,
+			#{item.returnTime} ,
+			#{item.clientId} ,
+			#{item.counselor} ,
+			#{item.createTime}
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+					test="returnNo != null and returnNo != ''">
+				returnNo = #{returnNo}
+				,
+			</if>
+			<if test="returnTime != null">
+				returnTime = #{returnTime} ,
+			</if>
+			<if
+					test="clientId != null and clientId != ''">
+				clientId = #{clientId}
+				,
+			</if>
+			<if
+					test="counselor != null and counselor != ''">
+				counselor = #{counselor}
+				,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime}
+			</if>
+		</set>
+	</sql>
+
+	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+					test="roomsourceReturncust.returnNo != null and roomsourceReturncust.returnNo != ''">
+				returnNo = #{roomsourceReturncust.returnNo}
+			</if>
+			<if test="roomsourceReturncust.returnTime != null">
+				and returnTime = #{roomsourceReturncust.returnTime}
+			</if>
+			<if
+					test="roomsourceReturncust.clientId != null and roomsourceReturncust.clientId != ''">
+				and clientId = #{roomsourceReturncust.clientId}
+			</if>
+			<if
+					test="roomsourceReturncust.counselor != null and roomsourceReturncust.counselor != ''">
+				and counselor = #{roomsourceReturncust.counselor}
+			</if>
+			<if test="roomsourceReturncust.createTime != null">
+				and createTime = #{roomsourceReturncust.createTime}
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateRoomsourceReturncustById">
+		UPDATE roomsource_returncust
+		<include refid="update_sql" />
+		WHERE
+		returnId =
+		#{returnId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteRoomsourceReturncustById">
+		DELETE FROM roomsource_returncust
+		WHERE
+		returnId = #{returnId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getRoomsourceReturncustById" resultType="com.bdcourtyard.business.returncust.vo.RoomsourceReturncust">
+		SELECT
+		<include refid="columns" />
+		FROM roomsource_returncust
+		WHERE
+		returnId = #{returnId} 	</select>
+
+	<!-- selsect -->
+	<select id="getRoomsourceReturncusts" resultType="com.bdcourtyard.business.returncust.vo.RoomsourceReturncust">
+		SELECT
+		<include refid="columns" />
+		FROM roomsource_returncust
+		<include refid="where_sql" />
+	</select>
+
+	<!-- selsect -->
+	<select id="getRoomsourceReturncustsForPage" resultType="com.bdcourtyard.business.returncust.vo.RoomsourceReturncust">
+		SELECT
+		<include refid="columns" />
+		FROM roomsource_returncust
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getRoomsourceReturncustsByConditions" resultType="com.bdcourtyard.business.returncust.vo.RoomsourceReturncust">
+		SELECT
+		<include refid="columns" />
+		FROM roomsource_returncust
+		WHERE
+		1 =1
+		<foreach collection="conditions" item="condition">
+			{condition.exp}
+		</foreach>
+	</select>
+
+	<select id="getCustomerReturnPage" parameterType="com.bdcourtyard.business.returncust.vo.RoomsourceReturncust" resultType="com.bdcourtyard.business.returncust.vo.RoomsourceReturncust">
+		select c.clientId,c.clientName,c.clientPhone,c.clientState ,c.estateId from control_client_entering c
+		<where>
+
+			<if test="clientId!=null and clientId != ''">
+				and  c.clientId like '%${clientId}%'
+			</if>
+
+			<if test="clientPhone!=null and clientPhone != ''">
+				and  c.clientPhone like '%${clientPhone}%'
+			</if>
+
+			<if test="clientName!=null and clientName != ''">
+				and  c.clientName like '%${clientName}%'
+			</if>
+			<if test="1!=0">
+				and  c.estateId = #{estateId}
+			</if>
+
+			<if test="list!=null and list.size>0">
+				and 	c.clientId in
+				<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+
+
+			</if>
+		</where>
+		ORDER BY c.clientId desc
+	</select>
+
+	<!--查询前先根据时间查询有的clientId-->
+	<select id="getNeedReturnClientId" parameterType="com.bdcourtyard.business.returncust.vo.RoomsourceReturncust" resultType="java.lang.String">
+		select n.clientId from  client_needreturn n
+		<where>
+			<if test="startTime!=null and startTime != ''">
+				<![CDATA[  n.needreturnTime>= #{startTime}  ]]>
+			</if>
+			<if test="endTime!=null and endTime != ''">
+				<![CDATA[ and   n.needreturnTime <= #{endTime}  ]]>
+			</if>
+		</where>
+	</select>
+
+
+	<select id="getReturnRecordForPage" resultType="com.bdcourtyard.business.returncust.vo.RoomsourceReturnRecord" parameterType="com.bdcourtyard.business.returncust.vo.RoomsourceReturnRecord">
+		select r.* ,u.employeeName as counselorName ,c.clientName as clientName,c.clientPhone  from roomsource_returncust r LEFT JOIN company_employee u on u.employeeId = r.counselor
+		LEFT JOIN control_client_entering c on c.clientId = r.clientId
+		<where>
+			<if test="startTime!=null and startTime != ''">
+				<![CDATA[  r.returnTime>= #{startTime}  ]]>
+			</if>
+			<if test="endTime!=null and endTime != ''">
+				<![CDATA[ and   r.returnTime <= #{endTime}  ]]>
+			</if>
+
+			<if test="clientId!=null and clientId != ''">
+				and  c.clientId =  #{clientId}
+			</if>
+
+		</where>
+
+		ORDER BY r.returnTime desc
+	</select>
+
+
+	<select id="getControlClientEnteringById" resultType="com.bdcourtyard.business.returncust.model.ControlClientEntering">
+		SELECT
+		*
+		FROM control_client_entering
+		WHERE
+		clientId = #{clientId} 	</select>
+
+	<select id="getNeedReturnTimeList" resultType="java.lang.String" parameterType="java.lang.String">
+		select needreturnTime from client_needreturn where
+		clientId = #{clientId}
+	</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<sql id="update_sql_client">
+		<set>
+			<if
+					test="clientName != null ">
+				clientName = #{clientName}
+				,
+			</if>
+			<if
+					test="clientAge != null ">
+				clientAge = #{clientAge}
+				,
+			</if>
+			<if
+					test="clientGender != null ">
+				clientGender = #{clientGender}
+				,
+			</if>
+			<if
+					test="clientLooks != null ">
+				clientLooks = #{clientLooks}
+				,
+			</if>
+			<if
+					test="clientPhone != null ">
+				clientPhone = #{clientPhone}
+				,
+			</if>
+			<if
+					test="idCard != null ">
+				idCard = #{idCard}
+				,
+			</if>
+			<if
+					test="information != null ">
+				information = #{information}
+				,
+			</if>
+			<if
+					test="clientFamily != null ">
+				clientFamily = #{clientFamily}
+				,
+			</if>
+			<if
+					test="familyStructure != null ">
+				familyStructure = #{familyStructure}
+				,
+			</if>
+			<if
+					test="dwellResidential != null ">
+				dwellResidential = #{dwellResidential}
+				,
+			</if>
+			<if
+					test="workResidential != null ">
+				workResidential = #{workResidential}
+				,
+			</if>
+			<if
+					test="vehicle != null ">
+				vehicle = #{vehicle}
+				,
+			</if>
+			<if
+					test="motive != null ">
+				motive = #{motive}
+				,
+			</if>
+			<if
+					test="emphasis != null ">
+				emphasis = #{emphasis}
+				,
+			</if>
+			<if
+					test="demandProduct != null ">
+				demandProduct = #{demandProduct}
+				,
+			</if>
+			<if
+					test="demandHouse != null ">
+				demandHouse = #{demandHouse}
+				,
+			</if>
+			<if
+					test="demandDiscount != null ">
+				demandDiscount = #{demandDiscount}
+				,
+			</if>
+			<if
+					test="demandTotal != null ">
+				demandTotal = #{demandTotal}
+				,
+			</if>
+			<if
+					test="demandFllor != null ">
+				demandFllor = #{demandFllor}
+				,
+			</if>
+			<if
+					test="productReflect != null ">
+				productReflect = #{productReflect}
+				,
+			</if>
+			<if
+					test="productRecommendRoomNumber != null ">
+				productRecommendRoomNumber = #{productRecommendRoomNumber}
+				,
+			</if>
+			<if
+					test="productRecommendHouseType != null ">
+				productRecommendHouseType = #{productRecommendHouseType}
+				,
+			</if>
+			<if
+					test="productRecommendProportion != null ">
+				productRecommendProportion = #{productRecommendProportion}
+				,
+			</if>
+			<if
+					test="productRecommendUnitPrice != null ">
+				productRecommendUnitPrice = #{productRecommendUnitPrice}
+				,
+			</if>
+			<if
+					test="productRecommendTotalPrices != null ">
+				productRecommendTotalPrices = #{productRecommendTotalPrices}
+				,
+			</if>
+			<if
+					test="receivingRecords != null ">
+				receivingRecords = #{receivingRecords}
+				,
+			</if>
+			<if test="clientRank != null">
+				clientRank = #{clientRank} ,
+			</if>
+			<if
+					test="clientInauguration != null ">
+				clientInauguration = #{clientInauguration}
+				,
+			</if>
+			<if
+					test="inaugurationName != null ">
+				inaugurationName = #{inaugurationName}
+				,
+			</if>
+			<if
+					test="duty != null">
+				duty = #{duty}
+				,
+			</if>
+			<if test="clientState != null">
+				clientState = #{clientState} ,
+			</if>
+
+			<if test="returnVisit != null">
+				returnVisit = #{returnVisit} ,
+			</if>
+			<if
+					test="trace != null ">
+				trace = #{trace}
+				,
+			</if>
+			<if test="bargain != null">
+				bargain = #{bargain} ,
+			</if>
+			<if
+					test="unsubmittedFactor != null ">
+				unsubmittedFactor = #{unsubmittedFactor}
+				,
+			</if>
+			<if
+					test="confirm != null ">
+				confirm = #{confirm}
+				,
+			</if>
+			<if
+					test="remark != null ">
+				remark = #{remark}
+				,
+			</if>
+
+			<if
+					test="emphasisRests != null ">
+				emphasisRests = #{emphasisRests}
+				,
+			</if>
+			<if
+					test="clientInaugurationRests != null ">
+				clientInaugurationRests = #{clientInaugurationRests}
+				,
+			</if>
+			<if
+					test="unsubmittedFactorRests != null ">
+				unsubmittedFactorRests = #{unsubmittedFactorRests}
+				,
+			</if>
+			<if
+					test="informationRests != null ">
+				informationRests = #{informationRests}
+
+			</if>
+
+		</set>
+	</sql>
+
+
+
+	<!-- 修改 -->
+	<update id="updateControlClientEnteringById">
+		UPDATE control_client_entering
+		<include refid="update_sql_client" />
+		WHERE
+		clientId =
+		#{clientId} 	</update>
+
+
+	<delete id="delAllNeedReturnByClientId" parameterType="com.bdcourtyard.business.clientmessage.model.UpdateControlClientEnteringResp">
+		DELETE  FROM  client_needreturn where clientId = #{clientId}
+	</delete>
+
+	<insert id="insertNeedReturnTime" parameterType="java.util.HashMap">
+		insert into client_needreturn(needId,clientId,needreturnTime,createTime) VALUES(#{needId},#{clientId},#{needreturnTime},now())
+	</insert>
+
+
+</mapper>

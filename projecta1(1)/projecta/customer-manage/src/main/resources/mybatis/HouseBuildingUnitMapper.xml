@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.building.dao.HouseBuildingUnitDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		unitId,unitName,buildingId,displayOrder,createTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertHouseBuildingUnit">
+	    <![CDATA[
+	        INSERT INTO house_building_unit ( 
+	        	unitId,unitName,buildingId,displayOrder,createTime
+	        ) VALUES (
+	        	#{unitId} ,
+	        	#{unitName} ,
+	        	#{buildingId} ,
+	        	#{displayOrder} ,
+	        	#{createTime} 
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertHouseBuildingUnitBatch">
+	    <![CDATA[
+	        INSERT INTO house_building_unit (
+	        	unitId,unitName,buildingId,displayOrder,createTime
+	        ) VALUES 
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+						#{item.unitId} ,
+						#{item.unitName} ,
+						#{item.buildingId} ,
+						#{item.displayOrder} ,
+						#{item.createTime} 
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+				test="unitName != null and unitName != ''">
+				unitName = #{unitName}
+				,
+			</if>
+			<if
+				test="buildingId != null and buildingId != ''">
+				buildingId = #{buildingId}
+				,
+			</if>
+			<if test="displayOrder != null">
+				displayOrder = #{displayOrder} ,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime} 
+			</if>
+		</set>
+	</sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+				test="houseBuildingUnit.unitName != null and houseBuildingUnit.unitName != ''">
+				unitName = #{houseBuildingUnit.unitName}				 
+			</if>
+			<if
+				test="houseBuildingUnit.buildingId != null and houseBuildingUnit.buildingId != ''">
+				 and buildingId = #{houseBuildingUnit.buildingId}				 
+			</if>
+			<if test="houseBuildingUnit.displayOrder != null">
+				 and  displayOrder = #{houseBuildingUnit.displayOrder} 
+			</if>
+			<if test="houseBuildingUnit.createTime != null">
+				 and createTime = #{houseBuildingUnit.createTime} 
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateHouseBuildingUnitById">
+		UPDATE house_building_unit
+		<include refid="update_sql" />
+		WHERE
+		unitId =
+		#{unitId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteHouseBuildingUnitById">
+		DELETE FROM house_building_unit
+		WHERE
+		unitId = #{unitId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getHouseBuildingUnitById" resultType="com.bdcourtyard.business.building.model.HouseBuildingUnit">
+		SELECT
+		<include refid="columns" />
+		FROM house_building_unit
+		WHERE
+		unitId = #{unitId} 	</select>
+
+	<!-- selsect -->
+	<select id="getHouseBuildingUnits" resultType="com.bdcourtyard.business.building.model.HouseBuildingUnit">
+		SELECT
+		<include refid="columns" />
+		FROM house_building_unit
+		<include refid="where_sql" />
+	</select>
+	
+			<!-- selsect -->
+	<select id="getHouseBuildingUnitsForPage" resultType="com.bdcourtyard.business.building.model.HouseBuildingUnit">
+		SELECT
+		<include refid="columns" />
+		FROM house_building_unit
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getHouseBuildingUnitsByConditions" resultType="com.bdcourtyard.business.building.model.HouseBuildingUnit">
+		SELECT
+		<include refid="columns" />
+		FROM house_building_unit
+		WHERE 
+			1 =1
+		<foreach collection="conditions" item="condition">
+			${condition.exp}
+		</foreach>
+	</select>
+
+	<delete id="deleteByBuildingId" parameterType="java.lang.String">
+		delete from house_building_unit
+		where buildingId = #{buildingId}
+	</delete>
+
+	<select id="selectByUnitNameAndBuildingId" parameterType="java.lang.String"
+			resultType="com.bdcourtyard.business.building.model.HouseBuildingUnit">
+		SELECT * FROM house_building_unit where unitName = #{unitName}
+		<if test="buildingId != null">
+			AND buildingId = #{buildingId}
+		</if>
+	</select>
+
+	<select id="findByBuildingId" parameterType="java.lang.String"
+			resultType="com.bdcourtyard.business.building.domain.UnitInfo">
+		SELECT
+		 unitId,unitName AS name,displayOrder,createTime
+		FROM house_building_unit where buildingId = #{buildingId}
+	</select>
+
+</mapper>

@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.housesell.dao.HousesellDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+		<![CDATA[
+		houseId,houseNum,houseDesc,buildingId,unitId,typeId,openTime,orientation,decorationDegree,displayOrder,estateId,createTime,houseNo,saleStatus
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertHousesell">
+		<![CDATA[
+	        INSERT INTO housesell (
+	        	houseId,houseNum,houseDesc,buildingId,unitId,typeId,openTime,orientation,decorationDegree,displayOrder,estateId,createTime,houseNo,saleStatus
+	        ) VALUES (
+	        	#{houseId} ,
+	        	#{houseNum} ,
+	        	#{houseDesc} ,
+	        	#{buildingId} ,
+	        	#{unitId} ,
+	        	#{typeId} ,
+	        	#{openTime} ,
+	        	#{orientation} ,
+	        	#{decorationDegree} ,
+	        	#{displayOrder} ,
+	        	#{estateId} ,
+	        	#{createTime} ,
+	        	#{houseNo} ,
+	        	#{saleStatus}
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertHousesellBatch">
+		<![CDATA[
+	        INSERT INTO housesell (
+	        	houseId,houseNum,houseDesc,buildingId,unitId,typeId,openTime,orientation,decorationDegree,displayOrder,estateId,createTime,houseNo,saleStatus
+	        ) VALUES
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+			#{item.houseId} ,
+			#{item.houseNum} ,
+			#{item.houseDesc} ,
+			#{item.buildingId} ,
+			#{item.unitId} ,
+			#{item.typeId} ,
+			#{item.openTime} ,
+			#{item.orientation} ,
+			#{item.decorationDegree} ,
+			#{item.displayOrder} ,
+			#{item.estateId} ,
+			#{item.createTime} ,
+			#{item.houseNo} ,
+			#{item.saleStatus}
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+					test="houseNum != null and houseNum != ''">
+				houseNum = #{houseNum}
+				,
+			</if>
+			<if
+					test="houseDesc != null and houseDesc != ''">
+				houseDesc = #{houseDesc}
+				,
+			</if>
+			<if
+					test="buildingId != null and buildingId != ''">
+				buildingId = #{buildingId}
+				,
+			</if>
+			<if
+					test="unitId != null and unitId != ''">
+				unitId = #{unitId}
+				,
+			</if>
+			<if
+					test="typeId != null and typeId != ''">
+				typeId = #{typeId}
+				,
+			</if>
+			<if test="openTime != null">
+				openTime = #{openTime} ,
+			</if>
+			<if test="orientation != null">
+				orientation = #{orientation} ,
+			</if>
+			<if test="decorationDegree != null">
+				decorationDegree = #{decorationDegree} ,
+			</if>
+			<if test="displayOrder != null">
+				displayOrder = #{displayOrder} ,
+			</if>
+			<if
+					test="estateId != null and estateId != ''">
+				estateId = #{estateId}
+				,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime} ,
+			</if>
+			<if
+					test="houseNo != null and houseNo != ''">
+				houseNo = #{houseNo}
+				,
+			</if>
+			<if test="saleStatus != null">
+				saleStatus = #{saleStatus}
+			</if>
+		</set>
+	</sql>
+
+	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+					test="housesell.houseNum != null and housesell.houseNum != ''">
+				houseNum = #{housesell.houseNum}
+			</if>
+			<if
+					test="housesell.houseDesc != null and housesell.houseDesc != ''">
+				and houseDesc = #{housesell.houseDesc}
+			</if>
+			<if
+					test="housesell.buildingId != null and housesell.buildingId != ''">
+				and buildingId = #{housesell.buildingId}
+			</if>
+			<if
+					test="housesell.unitId != null and housesell.unitId != ''">
+				and unitId = #{housesell.unitId}
+			</if>
+			<if
+					test="housesell.typeId != null and housesell.typeId != ''">
+				and typeId = #{housesell.typeId}
+			</if>
+			<if test="housesell.openTime != null">
+				and openTime = #{housesell.openTime}
+			</if>
+			<if test="housesell.orientation != null">
+				and  orientation = #{housesell.orientation}
+			</if>
+			<if test="housesell.decorationDegree != null">
+				and  decorationDegree = #{housesell.decorationDegree}
+			</if>
+			<if test="housesell.displayOrder != null">
+				and  displayOrder = #{housesell.displayOrder}
+			</if>
+			<if
+					test="housesell.estateId != null and housesell.estateId != ''">
+				and estateId = #{housesell.estateId}
+			</if>
+			<if test="housesell.createTime != null">
+				and createTime = #{housesell.createTime}
+			</if>
+			<if
+					test="housesell.houseNo != null and housesell.houseNo != ''">
+				and houseNo = #{housesell.houseNo}
+			</if>
+			<if test="housesell.saleStatus != null">
+				and  saleStatus = #{housesell.saleStatus}
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateHousesellById">
+		UPDATE housesell
+		<include refid="update_sql" />
+		WHERE
+		houseId =
+		#{houseId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteHousesellById">
+		DELETE FROM housesell
+		WHERE
+		houseId = #{houseId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getHousesellById" resultType="com.bdcourtyard.business.housesell.model.Housesell">
+		SELECT
+		<include refid="columns" />
+		FROM housesell
+		WHERE
+		houseId = #{houseId} 	</select>
+
+	<!-- selsect -->
+	<select id="getHousesells" resultType="com.bdcourtyard.business.housesell.model.Housesell">
+		SELECT
+		<include refid="columns" />
+		FROM housesell
+		<include refid="where_sql" />
+	</select>
+
+	<!-- selsect -->
+	<select id="getHousesellsForPage" resultType="com.bdcourtyard.business.housesell.model.Housesell">
+		SELECT
+		<include refid="columns" />
+		FROM housesell
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getHousesellsByConditions" resultType="com.bdcourtyard.business.housesell.model.Housesell">
+		SELECT
+		<include refid="columns" />
+		FROM housesell
+		WHERE
+		1 =1
+		<foreach collection="conditions" item="condition">
+			{condition.exp}
+		</foreach>
+	</select>
+
+
+	<select id="getHousesellsForPage_new" parameterType="com.bdcourtyard.business.housesell.model.Housesell" resultType="com.bdcourtyard.business.housesell.model.Housesell">
+		select a.houseId, a.houseNo, concat(b.buildingName,c.unitName,a.houseNum) as roomName ,
+		d.typeName,d.floorArea,d.interFloorArea,b.estateType, a.saleStatus
+		from house_house a  LEFT JOIN house_building b on a.buildingId =b.buildingId
+		LEFT JOIN house_building_unit c on a.unitId = c.unitId LEFT JOIN house_type d on d.typeId = a.typeId
+		<where>
+			<if test="typeId!=null and typeId!='' and typeId!='0' and typeId !=0">
+				a.typeId =#{typeId}
+			</if>
+			<if test="estateType!=null and estateType!='' and estateType!='0' and estateType !=0">
+				and 	b.estateType =#{estateType}
+			</if>
+			<if test="floorArea!=null and floorArea!=''">
+				and d.floorArea like  '%{floorArea}%'
+			</if>
+			<if test="estateId!=null and estateId!=''">
+				and  a.estateId =#{estateId}
+			</if>
+
+		</where>
+		ORDER BY a.createTime desc
+	</select>
+
+
+	<select id="getAllHouseType" resultType="com.bdcourtyard.business.housesell.vo.HouseTypeVo" parameterType="java.lang.String">
+		select typeId ,typeName  from house_type where estateId = #{estateId}
+	</select>
+
+
+	<select id="getHouseSellDetail" parameterType="java.lang.String" resultType="com.bdcourtyard.business.housesell.vo.HouseSellDetailVo">
+		select  a.houseId, a.houseNo, concat(b.buildingName,c.unitName,a.houseNum) as roomName ,
+		d.typeName,d.floorArea,d.interFloorArea,b.estateType, a.saleStatus,a.orientation,a.decorationDegree,a.buildingId,a.unitId,a.typeId,
+		(select f.fileUrl from system_file f where f.fileId = d.fileId) as fileUrl,a.floor,a.estateId,b.floors
+		from house_house a  LEFT JOIN house_building b on a.buildingId =b.buildingId
+		LEFT JOIN house_building_unit c on a.unitId = c.unitId LEFT JOIN house_type d on d.typeId = a.typeId
+		where a.houseId = #{houseId}
+	</select>
+
+
+	<select id="getHousePrice" resultType="com.bdcourtyard.business.housesell.vo.HousePriceVo" parameterType="com.bdcourtyard.business.housesell.vo.HouseSellDetailVo">
+		SELECT p.housePriceId,p.price,p.totalPrice,p.storey ,p.discountId from roomsource_houseprice p
+		where p.estateId= #{estateId} and p.typeId= #{typeId} and p.unitId= #{unitId} and p.buildingId =#{buildingId}
+		 AND CONCAT(',',p.storey,',') LIKE CONCAT('%,',#{floor},',%')
+
+
+	</select>
+
+	<select id="getHousePriceDiscount" resultType="com.bdcourtyard.business.housesell.vo.HousePriceDiscountVo" parameterType="java.lang.String">
+		<![CDATA[
+		select * from roomsource_housediscount d where d.discountId =  #{discountId}
+  AND now() >= d.efficacyDate and now() <d.loseEfficacyDate
+		]]>
+	</select>
+	<!--已售的房屋价格、折扣-->
+	<select id="getsaleHousePrice" parameterType="java.lang.String" resultType="com.bdcourtyard.business.housesell.vo.HousePriceVo" >
+		select  price,totalPrice,housePriceId  from roomsource_saleprice where houseId =#{houseId}
+	</select>
+	<select id="getsaleHousePriceDiscount" parameterType="java.lang.String" resultType="com.bdcourtyard.business.housesell.vo.HousePriceDiscountVo">
+		select discountId,discountName,discount,efficacyDate,loseEfficacyDate from roomsource_salediscount where houseId =#{houseId}
+	</select>
+
+
+
+
+</mapper>

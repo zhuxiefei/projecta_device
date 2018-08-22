@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.user.dao.AppVersionDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		versionId,versionName,appType,versionType,versionNo,versionUrl,isForce,versionDesc,createTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertAppVersion">
+	    <![CDATA[
+	        INSERT INTO app_version ( 
+	        	versionId,versionName,appType,versionType,versionNo,versionUrl,isForce,versionDesc,createTime
+	        ) VALUES (
+	        	#{versionId} ,
+	        	#{versionName} ,
+	        	#{appType} ,
+	        	#{versionType} ,
+	        	#{versionNo} ,
+	        	#{versionUrl} ,
+	        	#{isForce} ,
+	        	#{versionDesc} ,
+	        	#{createTime} 
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertAppVersionBatch">
+	    <![CDATA[
+	        INSERT INTO app_version (
+	        	versionId,versionName,appType,versionType,versionNo,versionUrl,isForce,versionDesc,createTime
+	        ) VALUES 
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+						#{item.versionId} ,
+						#{item.versionName} ,
+						#{item.appType} ,
+						#{item.versionType} ,
+						#{item.versionNo} ,
+						#{item.versionUrl} ,
+						#{item.isForce} ,
+						#{item.versionDesc} ,
+						#{item.createTime} 
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+				test="versionName != null and versionName != ''">
+				versionName = #{versionName}
+				,
+			</if>
+			<if test="appType != null">
+				appType = #{appType} ,
+			</if>
+			<if test="versionType != null">
+				versionType = #{versionType} ,
+			</if>
+			<if
+				test="versionNo != null and versionNo != ''">
+				versionNo = #{versionNo}
+				,
+			</if>
+			<if
+				test="versionUrl != null and versionUrl != ''">
+				versionUrl = #{versionUrl}
+				,
+			</if>
+			<if test="isForce != null">
+				isForce = #{isForce} ,
+			</if>
+			<if
+				test="versionDesc != null and versionDesc != ''">
+				versionDesc = #{versionDesc}
+				,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime} 
+			</if>
+		</set>
+	</sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+				test="appVersion.versionName != null and appVersion.versionName != ''">
+				versionName = #{appVersion.versionName}				 
+			</if>
+			<if test="appVersion.appType != null">
+				 and  appType = #{appVersion.appType} 
+			</if>
+			<if test="appVersion.versionType != null">
+				 and  versionType = #{appVersion.versionType} 
+			</if>
+			<if
+				test="appVersion.versionNo != null and appVersion.versionNo != ''">
+				 and versionNo = #{appVersion.versionNo}				 
+			</if>
+			<if
+				test="appVersion.versionUrl != null and appVersion.versionUrl != ''">
+				 and versionUrl = #{appVersion.versionUrl}				 
+			</if>
+			<if test="appVersion.isForce != null">
+				 and  isForce = #{appVersion.isForce} 
+			</if>
+			<if
+				test="appVersion.versionDesc != null and appVersion.versionDesc != ''">
+				 and versionDesc = #{appVersion.versionDesc}				 
+			</if>
+			<if test="appVersion.createTime != null">
+				 and createTime = #{appVersion.createTime} 
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateAppVersionById">
+		UPDATE app_version
+		<include refid="update_sql" />
+		WHERE
+		versionId =
+		#{versionId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteAppVersionById">
+		DELETE FROM app_version
+		WHERE
+		versionId = #{versionId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getAppVersionById" resultType="com.bdcourtyard.business.user.model.AppVersion">
+		SELECT
+		<include refid="columns" />
+		FROM app_version
+		WHERE
+		versionId = #{versionId} 	</select>
+
+	<!-- selsect -->
+	<select id="getAppVersions" resultType="com.bdcourtyard.business.user.model.AppVersion">
+		SELECT
+		<include refid="columns" />
+		FROM app_version
+		<include refid="where_sql" />
+	</select>
+	
+			<!-- selsect -->
+	<select id="getAppVersionsForPage" resultType="com.bdcourtyard.business.user.model.AppVersion">
+		SELECT
+		<include refid="columns" />
+		FROM app_version
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getAppVersionsByConditions" resultType="com.bdcourtyard.business.user.model.AppVersion">
+		SELECT
+		<include refid="columns" />
+		FROM app_version
+		WHERE 
+			1 =1
+		<foreach collection="conditions" item="condition">
+			${condition.exp}
+		</foreach>
+	</select>
+
+	<select id="selectNewestVersion" resultType="com.bdcourtyard.business.user.model.AppVersion">
+		SELECT * FROM app_version
+		WHERE versionType = 1 AND appType = #{appType}
+		ORDER BY createTime DESC LIMIT 0,1
+	</select>
+</mapper>

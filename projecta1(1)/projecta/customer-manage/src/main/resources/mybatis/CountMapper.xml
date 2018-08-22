@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.clentstatistics.dao.CountDao">
+
+	<select id="getUserCounts" resultType="com.bdcourtyard.business.clentstatistics.model.TjValue" parameterType="com.bdcourtyard.business.clentstatistics.model.ClientstatisticsParm">
+		SELECT COUNT(*) AS num,DATE_FORMAT(a.imputTime,'%Y-%m-%d')  AS name FROM control_client_entering a
+			WHERE
+				1=1 /*and a.clientState(客户状态)*/
+				<foreach collection="conditions" item="condition">
+					${condition.exp}
+				</foreach>
+			 GROUP BY DATE_FORMAT(a.imputTime,'%Y-%m-%d') ORDER BY DATE_FORMAT(a.imputTime,'%Y-%m-%d') ASC
+	</select>
+
+
+	<select id="getTypeCounts" resultType="com.bdcourtyard.business.clentstatistics.model.TjValue" parameterType="com.bdcourtyard.business.clentstatistics.model.ClientstatisticsParm">
+		SELECT COUNT(*) num,typeName as name FROM house_type a LEFT JOIN house_house b ON a.typeId=b.typeId LEFT JOIN roomsource_subscription c ON c.houseId=b.houseId
+		LEFT JOIN control_client_entering d ON d.clientId=c.clientId
+		/*where a.clientState(客户状态)*/ GROUP BY a.typeName
+	</select>
+
+
+
+
+
+</mapper>

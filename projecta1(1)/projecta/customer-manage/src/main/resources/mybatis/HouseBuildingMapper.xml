@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.building.dao.HouseBuildingDao">
+
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+
+		buildingId,buildingName,buildingDesc,displayOrder,estateId,estateType,createTime,floors
+
+        ]]>
+	</sql>
+
+    <!--保存 -->
+    <insert id="insertHouseBuilding">
+	    <![CDATA[
+
+	        INSERT INTO house_building ( 
+	        	buildingId,buildingName,buildingDesc,displayOrder,estateId,estateType,createTime,floors
+	        ) VALUES (
+	        	#{buildingId} ,
+	        	#{buildingName} ,
+	        	#{buildingDesc} ,
+	        	#{displayOrder} ,
+	        	#{estateId} ,
+	        	#{estateType} ,
+	        	#{createTime} ,
+	        	#{floors}
+	        )
+
+        ]]>
+	</insert>
+
+    <!-- 批量保存 -->
+    <insert id="insertHouseBuildingBatch">
+        <![CDATA[
+	        INSERT INTO house_building (
+	        	buildingId,buildingName,buildingDesc,displayOrder,estateId,estateType,createTime,floors
+	        ) VALUES 
+	         ]]>
+        <foreach item="item" collection="list" separator=",">
+            (
+            #{item.buildingId} ,
+            #{item.buildingName} ,
+            #{item.buildingDesc} ,
+            #{item.displayOrder} ,
+            #{item.estateId} ,
+            #{item.estateType} ,
+            #{item.createTime},
+            #{item.floors}
+            )
+        </foreach>
+
+    </insert>
+
+    <!-- update 条件组合 -->
+    <sql id="update_sql">
+        <set>
+            <if
+                    test="buildingName != null and buildingName != ''">
+                buildingName = #{buildingName}
+                ,
+            </if>
+            <if
+                    test="buildingDesc != null and buildingDesc != ''">
+                buildingDesc = #{buildingDesc}
+                ,
+            </if>
+            <if test="displayOrder != null">
+                displayOrder = #{displayOrder} ,
+            </if>
+            <if
+                    test="estateId != null and estateId != ''">
+                estateId = #{estateId}
+                ,
+            </if>
+            <if test="estateType != null">
+                estateType = #{estateType} ,
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime},
+            </if>
+            <if test="floors !=null">
+                floors=#{floors}
+            </if>
+        </set>
+    </sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+    <!-- where 条件组合 -->
+    <sql id="where_sql">
+        <where>
+            <if
+                    test="houseBuilding.buildingName != null and houseBuilding.buildingName != ''">
+                buildingName = #{houseBuilding.buildingName}
+            </if>
+            <if
+                    test="houseBuilding.buildingDesc != null and houseBuilding.buildingDesc != ''">
+                and buildingDesc = #{houseBuilding.buildingDesc}
+            </if>
+            <if test="houseBuilding.displayOrder != null">
+                and displayOrder = #{houseBuilding.displayOrder}
+            </if>
+            <if
+                    test="houseBuilding.estateId != null and houseBuilding.estateId != ''">
+                and estateId = #{houseBuilding.estateId}
+            </if>
+            <if test="houseBuilding.estateType != null">
+                and estateType = #{houseBuilding.estateType}
+            </if>
+            <if test="houseBuilding.createTime != null">
+                and createTime = #{houseBuilding.createTime}
+            </if>
+            <if test="houseBuilding.floors != null">
+                and floors = #{houseBuilding.floors}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 修改 -->
+    <update id="updateHouseBuildingById">
+        UPDATE house_building
+        <include refid="update_sql"/>
+        WHERE
+        buildingId =
+        #{buildingId}
+    </update>
+
+    <!-- 根据ID删除 -->
+    <delete id="deleteHouseBuildingById">
+		DELETE FROM house_building
+		WHERE
+		buildingId = #{buildingId} 	</delete>
+
+
+    <!-- selsect -->
+    <select id="getHouseBuildingById" resultType="com.bdcourtyard.business.building.model.HouseBuilding">
+        SELECT
+        <include refid="columns"/>
+        FROM house_building
+        WHERE
+        buildingId = #{buildingId}
+    </select>
+
+    <!-- selsect -->
+    <select id="getHouseBuildings" resultType="com.bdcourtyard.business.building.model.HouseBuilding">
+        SELECT
+        <include refid="columns"/>
+        FROM house_building
+        <include refid="where_sql"/>
+    </select>
+
+    <!-- selsect -->
+    <select id="getHouseBuildingsForPage" resultType="com.bdcourtyard.business.building.model.HouseBuilding">
+        SELECT
+        <include refid="columns"/>
+        FROM house_building
+        <include refid="where_sql"/>
+    </select>
+
+    <select id="getHouseBuildingsByConditions" resultType="com.bdcourtyard.business.building.model.HouseBuilding">
+        SELECT
+        <include refid="columns"/>
+        FROM house_building
+        WHERE
+        1 =1
+        <foreach collection="conditions" item="condition">
+            ${condition.exp}
+        </foreach>
+    </select>
+
+    <select id="findByNameAndEstateId" parameterType="java.lang.String"
+            resultType="com.bdcourtyard.business.building.model.HouseBuilding">
+		SELECT * FROM house_building WHERE buildingName = #{buildingName} AND estateId = #{estateId}
+	</select>
+
+    <select id="findBuildingList" parameterType="java.lang.String"
+            resultType="com.bdcourtyard.business.building.domain.BuildingInfo">
+        SELECT
+          buildingId,buildingName AS name,buildingDesc,displayOrder,createTime,estateType,floors
+        FROM house_building WHERE estateId = #{estateId}
+    </select>
+</mapper>

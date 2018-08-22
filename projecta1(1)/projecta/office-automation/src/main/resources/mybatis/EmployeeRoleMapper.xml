@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.account.dao.EmployeeRoleDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		roleId,roleName,roleDesc,createTime,estateId
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertEmployeeRole">
+	    <![CDATA[
+	        INSERT INTO employee_role ( 
+	        	roleId,roleName,roleDesc,createTime,estateId
+	        ) VALUES (
+	        	#{roleId} ,
+	        	#{roleName} ,
+	        	#{roleDesc} ,
+	        	#{createTime} ,
+	        	#{estateId} 
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertEmployeeRoleBatch">
+	    <![CDATA[
+	        INSERT INTO employee_role (
+	        	roleId,roleName,roleDesc,createTime,estateId
+	        ) VALUES 
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+						#{item.roleId} ,
+						#{item.roleName} ,
+						#{item.roleDesc} ,
+						#{item.createTime} ,
+						#{item.estateId} 
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+				test="roleName != null and roleName != ''">
+				roleName = #{roleName}
+				,
+			</if>
+			<if
+				test="roleDesc != null and roleDesc != ''">
+				roleDesc = #{roleDesc}
+				,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime} ,
+			</if>
+			<if
+				test="estateId != null and estateId != ''">
+				estateId = #{estateId}
+				
+			</if>
+		</set>
+	</sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+				test="employeeRole.roleName != null and employeeRole.roleName != ''">
+				roleName = #{employeeRole.roleName}				 
+			</if>
+			<if
+				test="employeeRole.roleDesc != null and employeeRole.roleDesc != ''">
+				 and roleDesc = #{employeeRole.roleDesc}				 
+			</if>
+			<if test="employeeRole.createTime != null">
+				 and createTime = #{employeeRole.createTime} 
+			</if>
+			<if
+				test="employeeRole.estateId != null and employeeRole.estateId != ''">
+				 and estateId = #{employeeRole.estateId}				 
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateEmployeeRoleById">
+		UPDATE employee_role
+		<include refid="update_sql" />
+		WHERE
+		roleId =
+		#{roleId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteEmployeeRoleById">
+		DELETE FROM employee_role
+		WHERE
+		roleId = #{roleId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getEmployeeRoleById" resultType="com.bdcourtyard.business.account.model.EmployeeRole">
+		SELECT
+		<include refid="columns" />
+		FROM employee_role
+		WHERE
+		roleId = #{roleId} 	</select>
+
+	<!-- selsect -->
+	<select id="getEmployeeRoles" resultType="com.bdcourtyard.business.account.model.EmployeeRole">
+		select
+		roleId, roleName, roleDesc
+		from employee_role where 1 = 1
+		AND roleId != 1
+		AND estateId = #{estateId}
+		<if test="roleName != null and roleName !=''">
+			and roleName like concat(concat('%',#{roleName,jdbcType=VARCHAR}),'%')
+		</if>
+		order by createTime asc
+	</select>
+	
+			<!-- selsect -->
+	<select id="getEmployeeRolesForPage" resultType="com.bdcourtyard.business.account.model.EmployeeRole">
+		SELECT
+		<include refid="columns" />
+		FROM employee_role
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getEmployeeRolesByConditions" resultType="com.bdcourtyard.business.account.model.EmployeeRole">
+		SELECT
+		<include refid="columns" />
+		FROM employee_role
+		WHERE 
+			1 =1
+		<foreach collection="conditions" item="condition">
+			${condition.exp}
+		</foreach>
+	</select>
+
+	<select id="findRoleList" resultType="com.bdcourtyard.business.account.domain.RoleInfo"  >
+		select roleId,roleName
+		from employee_role
+		WHERE roleId != 1 AND estateId = #{estateId}
+	</select>
+
+	<select id="findRoleIsExistence" resultType="com.bdcourtyard.business.account.model.EmployeeRole"
+			parameterType="java.lang.String">
+		select
+		*
+		from employee_role
+		where binary roleName = #{roleName,jdbcType=VARCHAR} AND estateId = #{estateId}
+	</select>
+
+	<update id="updateByPrimaryKeySelective" parameterType="com.bdcourtyard.business.account.model.EmployeeRole" >
+		update employee_role
+		<set >
+			<if test="roleName != null" >
+				roleName = #{roleName,jdbcType=VARCHAR},
+			</if>
+			<if test="roleDesc != null" >
+				roleDesc = #{roleDesc,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null" >
+				createTime = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="estateId != null" >
+				estateId = #{estateId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where roleId = #{roleId}
+	</update>
+</mapper>

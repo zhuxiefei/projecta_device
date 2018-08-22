@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.clientmessage.dao.ValidRoomsourceReturncustDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		returnId,returnNo,returnTime,clientId,counselor,createTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertRoomsourceReturncust">
+	    <![CDATA[
+	        INSERT INTO roomsource_returncust ( 
+	        	returnId,returnNo,returnTime,clientId,counselor,createTime
+	        ) VALUES (
+	        	#{returnId} ,
+	        	#{returnNo} ,
+	        	#{returnTime} ,
+	        	#{clientId} ,
+	        	#{counselor} ,
+	        	#{createTime} 
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertRoomsourceReturncustBatch">
+	    <![CDATA[
+	        INSERT INTO roomsource_returncust (
+	        	returnId,returnNo,returnTime,clientId,counselor,createTime
+	        ) VALUES 
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+						#{item.returnId} ,
+						#{item.returnNo} ,
+						#{item.returnTime} ,
+						#{item.clientId} ,
+						#{item.counselor} ,
+						#{item.createTime} 
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+				test="returnNo != null and returnNo != ''">
+				returnNo = #{returnNo}
+				,
+			</if>
+			<if test="returnTime != null">
+				returnTime = #{returnTime} ,
+			</if>
+			<if
+				test="clientId != null and clientId != ''">
+				clientId = #{clientId}
+				,
+			</if>
+			<if
+				test="counselor != null and counselor != ''">
+				counselor = #{counselor}
+				,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime} 
+			</if>
+		</set>
+	</sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+				test="roomsourceReturncust.returnNo != null and roomsourceReturncust.returnNo != ''">
+				returnNo = #{roomsourceReturncust.returnNo}				 
+			</if>
+			<if test="roomsourceReturncust.returnTime != null">
+				 and returnTime = #{roomsourceReturncust.returnTime} 
+			</if>
+			<if
+				test="roomsourceReturncust.clientId != null and roomsourceReturncust.clientId != ''">
+				 and clientId = #{roomsourceReturncust.clientId}				 
+			</if>
+			<if
+				test="roomsourceReturncust.counselor != null and roomsourceReturncust.counselor != ''">
+				 and counselor = #{roomsourceReturncust.counselor}				 
+			</if>
+			<if test="roomsourceReturncust.createTime != null">
+				 and createTime = #{roomsourceReturncust.createTime} 
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateRoomsourceReturncustById">
+		UPDATE roomsource_returncust
+		<include refid="update_sql" />
+		WHERE
+		returnId =
+		#{returnId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteRoomsourceReturncustById">
+		DELETE FROM roomsource_returncust
+		WHERE
+		returnId = #{returnId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getRoomsourceReturncustById" resultType="com.bdcourtyard.business.clientmessage.model.RoomsourceReturncust">
+		SELECT
+		<include refid="columns" />
+		FROM roomsource_returncust
+		WHERE
+		returnId = #{returnId} 	</select>
+
+	<!-- selsect -->
+	<select id="getRoomsourceReturncusts" resultType="com.bdcourtyard.business.clientmessage.model.RoomsourceReturncust">
+		SELECT
+		<include refid="columns" />
+		FROM roomsource_returncust
+		<include refid="where_sql" />
+	</select>
+	
+			<!-- selsect -->
+	<select id="getRoomsourceReturncustsForPage" resultType="com.bdcourtyard.business.clientmessage.model.RoomsourceReturncust">
+		SELECT
+		<include refid="columns" />
+		FROM roomsource_returncust
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getRoomsourceReturncustsByConditions" resultType="com.bdcourtyard.business.clientmessage.model.RoomsourceReturncust">
+		SELECT
+		<include refid="columns" />
+		FROM roomsource_returncust
+		WHERE 
+			1 =1
+		<foreach collection="conditions" item="condition">
+			{condition.exp}
+		</foreach>
+	</select>
+
+</mapper>

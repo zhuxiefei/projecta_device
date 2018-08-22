@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/projecta/common-tools/common-tools.iml" filepath="$PROJECT_DIR$/projecta/common-tools/common-tools.iml" />
+      <module fileurl="file://$PROJECT_DIR$/projecta/customer-manage/customer-manage.iml" filepath="$PROJECT_DIR$/projecta/customer-manage/customer-manage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/projecta/office-automation/office-automation.iml" filepath="$PROJECT_DIR$/projecta/office-automation/office-automation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/projecta/projecta.iml" filepath="$PROJECT_DIR$/projecta/projecta.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/projecta1(1).iml" filepath="$PROJECT_DIR$/.idea/projecta1(1).iml" />
+      <module fileurl="file://$PROJECT_DIR$/projecta/property-manage/property-manage.iml" filepath="$PROJECT_DIR$/projecta/property-manage/property-manage.iml" />
+    </modules>
+  </component>
+</project>

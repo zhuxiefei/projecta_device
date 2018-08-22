@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.housetype.dao.HouseTypeSenceDao">
+
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+
+		senceId,typeId,fileId,sceneName,sceneSort,createTime
+
+        ]]>
+	</sql>
+
+    <!--保存 -->
+    <insert id="insertHouseTypeSence">
+	    <![CDATA[
+
+	        INSERT INTO house_type_sence ( 
+	        	senceId,typeId,fileId,sceneName,sceneSort,createTime
+	        ) VALUES (
+	        	#{senceId} ,
+	        	#{typeId} ,
+	        	#{fileId} ,
+	        	#{sceneName} ,
+	        	#{sceneSort} ,
+	        	#{createTime} 
+	        )
+
+        ]]>
+	</insert>
+
+    <!-- 批量保存 -->
+    <insert id="insertHouseTypeSenceBatch">
+        <![CDATA[
+	        INSERT INTO house_type_sence (
+	        	senceId,typeId,fileId,sceneName,sceneSort,createTime
+	        ) VALUES 
+	         ]]>
+        <foreach item="item" collection="list" separator=",">
+            (
+            #{item.senceId} ,
+            #{item.typeId} ,
+            #{item.fileId} ,
+            #{item.sceneName} ,
+            #{item.sceneSort} ,
+            #{item.createTime}
+            )
+        </foreach>
+
+    </insert>
+
+    <!-- update 条件组合 -->
+    <sql id="update_sql">
+        <set>
+            <if
+                    test="typeId != null and typeId != ''">
+                typeId = #{typeId}
+                ,
+            </if>
+            <if
+                    test="fileId != null and fileId != ''">
+                fileId = #{fileId}
+                ,
+            </if>
+            <if
+                    test="sceneName != null and sceneName != ''">
+                sceneName = #{sceneName}
+                ,
+            </if>
+            <if test="sceneSort != null">
+                sceneSort = #{sceneSort} ,
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime}
+            </if>
+        </set>
+    </sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+    <!-- where 条件组合 -->
+    <sql id="where_sql">
+        <where>
+            <if
+                    test="houseTypeSence.typeId != null and houseTypeSence.typeId != ''">
+                typeId = #{houseTypeSence.typeId}
+            </if>
+            <if
+                    test="houseTypeSence.fileId != null and houseTypeSence.fileId != ''">
+                and fileId = #{houseTypeSence.fileId}
+            </if>
+            <if
+                    test="houseTypeSence.sceneName != null and houseTypeSence.sceneName != ''">
+                and sceneName = #{houseTypeSence.sceneName}
+            </if>
+            <if test="houseTypeSence.sceneSort != null">
+                and sceneSort = #{houseTypeSence.sceneSort}
+            </if>
+            <if test="houseTypeSence.createTime != null">
+                and createTime = #{houseTypeSence.createTime}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 修改 -->
+    <update id="updateHouseTypeSenceById">
+        UPDATE house_type_sence
+        <include refid="update_sql"/>
+        WHERE
+        senceId =
+        #{senceId}
+    </update>
+
+    <!-- 根据ID删除 -->
+    <delete id="deleteHouseTypeSenceById">
+		DELETE FROM house_type_sence
+		WHERE
+		senceId = #{senceId} 	</delete>
+
+
+    <!-- selsect -->
+    <select id="getHouseTypeSenceById" resultType="com.bdcourtyard.business.housetype.model.HouseTypeSence">
+        SELECT
+        <include refid="columns"/>
+        FROM house_type_sence
+        WHERE
+        senceId = #{senceId}
+    </select>
+
+    <!-- selsect -->
+    <select id="getHouseTypeSences" resultType="com.bdcourtyard.business.housetype.model.HouseTypeSence">
+        SELECT
+        <include refid="columns"/>
+        FROM house_type_sence
+        <include refid="where_sql"/>
+    </select>
+
+    <!-- selsect -->
+    <select id="getHouseTypeSencesForPage" resultType="com.bdcourtyard.business.housetype.model.HouseTypeSence">
+        SELECT
+        <include refid="columns"/>
+        FROM house_type_sence
+        <include refid="where_sql"/>
+    </select>
+
+    <select id="getHouseTypeSencesByConditions" resultType="com.bdcourtyard.business.housetype.model.HouseTypeSence">
+        SELECT
+        <include refid="columns"/>
+        FROM house_type_sence
+        WHERE
+        1 =1
+        <foreach collection="conditions" item="condition">
+            ${condition.exp}
+        </foreach>
+    </select>
+
+    <delete id="deleteByTypeId" parameterType="java.lang.String">
+		DELETE FROM house_type_sence WHERE typeId = #{typeId}
+	</delete>
+
+    <select id="fingByTypeId" parameterType="java.lang.String"
+            resultType="com.bdcourtyard.business.housetype.domain.SenceResp">
+		SELECT
+		f.fileUrl,
+		s.fileId,
+		s.sceneName,
+		s.sceneSort
+		FROM house_type_sence s
+		LEFT JOIN system_file f ON s.fileId = f.fileId
+		WHERE s.typeId = #{typeId}
+	</select>
+
+    <delete id="deleteByTypeIds" parameterType="java.lang.String">
+        DELETE FROM house_type_sence WHERE typeId IN
+        <foreach collection="array" item="typeId" open="(" separator="," close=")">
+            #{typeId}
+        </foreach>
+    </delete>
+</mapper>

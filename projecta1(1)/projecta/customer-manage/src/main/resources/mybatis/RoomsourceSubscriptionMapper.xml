@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.subscription.dao.RoomsourceSubscriptionDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+		<![CDATA[
+		subscriptionId,houseId,contractName,idCard,phone,address,bargainRoom,subscriptionArea,bargainPrice,subscriptionTime,contractTime,payment,bargainTotal,handsel,agreementTime,firstPay,balance,processsingTime,datum,records,attention,createTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertRoomsourceSubscription">
+		<![CDATA[
+	        INSERT INTO roomsource_subscription (
+	        	subscriptionId,houseId,contractName,idCard,phone,address,bargainRoom,subscriptionArea,bargainPrice,subscriptionTime,contractTime,payment,bargainTotal,handsel,agreementTime,firstPay,balance,processsingTime,datum,records,attention,createTime
+	        ) VALUES (
+	        	#{subscriptionId} ,
+	        	#{houseId} ,
+	        	#{contractName} ,
+	        	#{idCard} ,
+	        	#{phone} ,
+	        	#{address} ,
+	        	#{bargainRoom} ,
+	        	#{subscriptionArea} ,
+	        	#{bargainPrice} ,
+	        	#{subscriptionTime} ,
+	        	#{contractTime} ,
+	        	#{payment} ,
+	        	#{bargainTotal} ,
+	        	#{handsel} ,
+	        	#{agreementTime} ,
+	        	#{firstPay} ,
+	        	#{balance} ,
+	        	#{processsingTime} ,
+	        	#{datum} ,
+	        	#{records} ,
+	        	#{attention} ,
+	        	#{createTime}
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertRoomsourceSubscriptionBatch">
+		<![CDATA[
+	        INSERT INTO roomsource_subscription (
+	        	subscriptionId,houseId,contractName,idCard,phone,address,bargainRoom,subscriptionArea,bargainPrice,subscriptionTime,contractTime,payment,bargainTotal,handsel,agreementTime,firstPay,balance,processsingTime,datum,records,attention,createTime
+	        ) VALUES
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+			#{item.subscriptionId} ,
+			#{item.houseId} ,
+			#{item.contractName} ,
+			#{item.idCard} ,
+			#{item.phone} ,
+			#{item.address} ,
+			#{item.bargainRoom} ,
+			#{item.subscriptionArea} ,
+			#{item.bargainPrice} ,
+			#{item.subscriptionTime} ,
+			#{item.contractTime} ,
+			#{item.payment} ,
+			#{item.bargainTotal} ,
+			#{item.handsel} ,
+			#{item.agreementTime} ,
+			#{item.firstPay} ,
+			#{item.balance} ,
+			#{item.processsingTime} ,
+			#{item.datum} ,
+			#{item.records} ,
+			#{item.attention} ,
+			#{item.createTime}
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+					test="houseId != null and houseId != ''">
+				houseId = #{houseId}
+				,
+			</if>
+			<if
+					test="contractName != null and contractName != ''">
+				contractName = #{contractName}
+				,
+			</if>
+			<if
+					test="idCard != null and idCard != ''">
+				idCard = #{idCard}
+				,
+			</if>
+			<if
+					test="phone != null and phone != ''">
+				phone = #{phone}
+				,
+			</if>
+			<if
+					test="address != null and address != ''">
+				address = #{address}
+				,
+			</if>
+			<if
+					test="bargainRoom != null and bargainRoom != ''">
+				bargainRoom = #{bargainRoom}
+				,
+			</if>
+			<if
+					test="subscriptionArea != null and subscriptionArea != ''">
+				subscriptionArea = #{subscriptionArea}
+				,
+			</if>
+			<if test="bargainPrice != null">
+				bargainPrice = #{bargainPrice} ,
+			</if>
+			<if test="subscriptionTime != null">
+				subscriptionTime = #{subscriptionTime} ,
+			</if>
+			<if test="contractTime != null">
+				contractTime = #{contractTime} ,
+			</if>
+			<if test="payment != null">
+				payment = #{payment} ,
+			</if>
+			<if test="bargainTotal != null">
+				bargainTotal = #{bargainTotal} ,
+			</if>
+			<if test="handsel != null">
+				handsel = #{handsel} ,
+			</if>
+			<if test="agreementTime != null">
+				agreementTime = #{agreementTime} ,
+			</if>
+			<if test="firstPay != null">
+				firstPay = #{firstPay} ,
+			</if>
+			<if test="balance != null">
+				balance = #{balance} ,
+			</if>
+			<if test="processsingTime != null">
+				processsingTime = #{processsingTime} ,
+			</if>
+			<if
+					test="datum != null and datum != ''">
+				datum = #{datum}
+				,
+			</if>
+			<if
+					test="records != null and records != ''">
+				records = #{records}
+				,
+			</if>
+			<if
+					test="attention != null and attention != ''">
+				attention = #{attention}
+				,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime}
+			</if>
+		</set>
+	</sql>
+
+	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+					test="roomsourceSubscription.houseId != null and roomsourceSubscription.houseId != ''">
+				houseId = #{roomsourceSubscription.houseId}
+			</if>
+			<if
+					test="roomsourceSubscription.contractName != null and roomsourceSubscription.contractName != ''">
+				and contractName = #{roomsourceSubscription.contractName}
+			</if>
+			<if
+					test="roomsourceSubscription.idCard != null and roomsourceSubscription.idCard != ''">
+				and idCard = #{roomsourceSubscription.idCard}
+			</if>
+			<if
+					test="roomsourceSubscription.phone != null and roomsourceSubscription.phone != ''">
+				and phone = #{roomsourceSubscription.phone}
+			</if>
+			<if
+					test="roomsourceSubscription.address != null and roomsourceSubscription.address != ''">
+				and address = #{roomsourceSubscription.address}
+			</if>
+			<if
+					test="roomsourceSubscription.bargainRoom != null and roomsourceSubscription.bargainRoom != ''">
+				and bargainRoom = #{roomsourceSubscription.bargainRoom}
+			</if>
+			<if
+					test="roomsourceSubscription.subscriptionArea != null and roomsourceSubscription.subscriptionArea != ''">
+				and subscriptionArea = #{roomsourceSubscription.subscriptionArea}
+			</if>
+			<if test="roomsourceSubscription.bargainPrice != null">
+				and  bargainPrice = #{roomsourceSubscription.bargainPrice}
+			</if>
+			<if test="roomsourceSubscription.subscriptionTime != null">
+				and subscriptionTime = #{roomsourceSubscription.subscriptionTime}
+			</if>
+			<if test="roomsourceSubscription.contractTime != null">
+				and contractTime = #{roomsourceSubscription.contractTime}
+			</if>
+			<if test="roomsourceSubscription.payment != null">
+				and  payment = #{roomsourceSubscription.payment}
+			</if>
+			<if test="roomsourceSubscription.bargainTotal != null">
+				and  bargainTotal = #{roomsourceSubscription.bargainTotal}
+			</if>
+			<if test="roomsourceSubscription.handsel != null">
+				and  handsel = #{roomsourceSubscription.handsel}
+			</if>
+			<if test="roomsourceSubscription.agreementTime != null">
+				and agreementTime = #{roomsourceSubscription.agreementTime}
+			</if>
+			<if test="roomsourceSubscription.firstPay != null">
+				and  firstPay = #{roomsourceSubscription.firstPay}
+			</if>
+			<if test="roomsourceSubscription.balance != null">
+				and  balance = #{roomsourceSubscription.balance}
+			</if>
+			<if test="roomsourceSubscription.processsingTime != null">
+				and processsingTime = #{roomsourceSubscription.processsingTime}
+			</if>
+			<if
+					test="roomsourceSubscription.datum != null and roomsourceSubscription.datum != ''">
+				and datum = #{roomsourceSubscription.datum}
+			</if>
+			<if
+					test="roomsourceSubscription.records != null and roomsourceSubscription.records != ''">
+				and records = #{roomsourceSubscription.records}
+			</if>
+			<if
+					test="roomsourceSubscription.attention != null and roomsourceSubscription.attention != ''">
+				and attention = #{roomsourceSubscription.attention}
+			</if>
+			<if test="roomsourceSubscription.createTime != null">
+				and createTime = #{roomsourceSubscription.createTime}
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateRoomsourceSubscriptionById">
+		UPDATE roomsource_subscription
+		<include refid="update_sql" />
+		WHERE
+		subscriptionId =
+		#{subscriptionId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteRoomsourceSubscriptionById">
+		DELETE FROM roomsource_subscription
+		WHERE
+		subscriptionId = #{subscriptionId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getRoomsourceSubscriptionById" resultType="com.bdcourtyard.business.subscription.model.RoomsourceSubscription">
+		select subscriptionId,houseId, sub.clientId, c.clientName as contractName,c.idCard,c.clientPhone as phone,c.dwellResidential as address,bargainRoom,
+		subscriptionArea,bargainPrice,subscriptionTime,contractTime,payment,bargainTotal,handsel,agreementTime,
+		firstPay,balance,processsingTime,datum,records,attention,datumOther FROM roomsource_subscription sub LEFT JOIN
+		control_client_entering c on sub.clientId = c.clientId
+		WHERE
+		sub.houseId = #{houseId} 	</select>
+
+	<!-- selsect -->
+	<select id="getRoomsourceSubscriptions" resultType="com.bdcourtyard.business.subscription.model.RoomsourceSubscription">
+		SELECT
+		<include refid="columns" />
+		FROM roomsource_subscription
+		<include refid="where_sql" />
+	</select>
+
+	<!-- selsect -->
+	<select id="getRoomsourceSubscriptionsForPage" resultType="com.bdcourtyard.business.subscription.model.RoomsourceSubscription">
+		SELECT
+		<include refid="columns" />
+		FROM roomsource_subscription
+		<include refid="where_sql" />
+	</select>
+
+
+
+
+	<select id="getHousesubForPage_new" parameterType="com.bdcourtyard.business.subscription.vo.HousesubVo" resultType="com.bdcourtyard.business.subscription.vo.HousesubVo">
+		select a.houseId, a.houseNo, concat(b.buildingName,c.unitName,a.houseNum) as roomName ,
+		d.typeName,d.floorArea,d.interFloorArea,b.estateType, a.saleStatus ,(select cc.clientName from control_client_entering cc where cc.clientId =sub.clientId)
+		as clientName
+		from house_house a  LEFT JOIN house_building b on a.buildingId =b.buildingId
+		LEFT JOIN house_building_unit c on a.unitId = c.unitId LEFT JOIN house_type d on d.typeId = a.typeId
+		LEFT JOIN roomsource_subscription sub on a.houseId = sub.houseId
+		<where>
+			<if test="typeId!=null and typeId!='' and typeId!='0' and typeId !=0">
+				a.typeId =#{typeId}
+			</if>
+			<if test="estateType!=null and estateType!='' and estateType!='0' and estateType !=0">
+				and 	b.estateType =#{estateType}
+			</if>
+			<if test="floorArea!=null and floorArea!=''">
+				and d.floorArea like  '%${floorArea}%'
+			</if>
+			<if test="estateId!=null and estateId!=''">
+				and  a.estateId =#{estateId}
+			</if>
+
+		</where>
+		ORDER BY a.createTime desc
+	</select>
+
+
+
+	<!--退房   start-->
+	<delete id="cancelHouseState1" parameterType="java.lang.String">
+		DELETE  FROM  roomsource_subscription where houseId =#{houseId}
+	</delete>
+	<delete id="cancelHouseState2" parameterType="java.lang.String">
+		DELETE  FROM  roomsource_saleprice where houseId =#{houseId}
+	</delete>
+	<delete id="cancelHouseState3" parameterType="java.lang.String">
+		DELETE  FROM  roomsource_salediscount where houseId =#{houseId}
+	</delete>
+	<update id="updateHouseStatus" parameterType="java.lang.String">
+		UPDATE  house_house set saleStatus =1 where houseId = #{houseId}
+	</update>
+	<!--退房   end-->
+
+
+	<!--选购前获取客户信息-->
+	<select id="getMeaasgeByName" parameterType="java.util.HashMap" resultType="com.bdcourtyard.business.subscription.vo.SubInformatiomVo">
+		select c.clientId,c.clientName as contractName,c.clientPhone as phone,c.idCard,c.dwellResidential as address from  control_client_entering c where c.clientName =#{name}
+	</select>
+
+	<update id="updateClientById" parameterType="com.bdcourtyard.business.subscription.vo.SubInformatiomVo">
+		update control_client_entering SET  clientName=#{contractName},clientPhone=#{phone},idCard=#{idCard},dwellResidential=#{address}
+		where clientId=#{clientId}
+	</update>
+
+	<insert id="insertClient" parameterType="com.bdcourtyard.business.subscription.vo.SubInformatiomVo">
+		INSERT INTO control_client_entering(clientId,clientName,clientPhone,idCard,dwellResidential,clientAge,clientGender,clientLooks,emphasis,demandHouse,demandFllor,demandDiscount,demandTotal,productRecommendRoomNumber,productRecommendHouseType,productRecommendProportion,productRecommendUnitPrice,productRecommendTotalPrices,clientRank,clientState,imputTime,returnVisit,bargain,confirm,estateId,counselor)
+		VALUES (#{clientId},#{contractName},#{phone},#{idCard},#{address},"0","0","","","","","","","","","","","",1,1,now(),2,2,"",#{estateId},#{employeeId})
+	</insert>
+
+	<!--选购操作-->
+	<insert id="insertSub_xg" parameterType="com.bdcourtyard.business.subscription.vo.SubInformatiomVo">
+		INSERT INTO roomsource_subscription(subscriptionId,houseId,clientId,bargainRoom,
+		subscriptionArea,bargainPrice,subscriptionTime,contractTime,payment,bargainTotal,firstPay,
+		balance,records,createTime) VALUES (#{subscriptionId},#{houseId},#{clientId},#{bargainRoom},#{subscriptionArea},
+		#{bargainPrice},#{subscriptionTime},#{contractTime},#{payment},#{bargainTotal},#{firstPay},#{balance},#{records},now())
+	</insert>
+
+	<!--认购操作-->
+	<update id="updateSub_rg" parameterType="com.bdcourtyard.business.subscription.vo.SubInformatiomVo">
+		UPDATE  roomsource_subscription SET handsel =#{handsel},agreementTime=#{agreementTime}  where houseId=#{houseId} and subscriptionId=#{subscriptionId} and clientId=#{clientId}
+	</update>
+
+	<!--认购操作-->
+	<update id="updateSub_ht" parameterType="com.bdcourtyard.business.subscription.vo.SubInformatiomVo">
+		UPDATE  roomsource_subscription SET handsel =#{handsel},agreementTime=#{agreementTime} ,
+		bargainRoom=#{bargainRoom},
+		subscriptionArea=#{subscriptionArea},bargainPrice=#{bargainPrice},subscriptionTime=#{subscriptionTime},contractTime=#{contractTime},payment=#{payment},bargainTotal=#{bargainTotal},firstPay=#{firstPay},
+		balance=#{balance},records=#{records},processsingTime=#{processsingTime},datum=#{datum},attention=#{attention}
+		<if test="datumOther!=null">
+			,datumOther =#{datumOther}
+		</if>
+		where houseId=#{houseId} and subscriptionId=#{subscriptionId} and clientId=#{clientId}
+	</update>
+	<insert id="insertSalePrice" parameterType="com.bdcourtyard.business.subscription.vo.SalePriceVo">
+		INSERT  INTO  roomsource_saleprice(salePriceId,houseId,housePriceId,price,totalPrice,createTime)
+		VALUES (#{salePriceId},#{houseId},#{housePriceId},#{price},#{totalPrice},now())
+	</insert>
+	<insert id="insertSaleDiscount" parameterType="com.bdcourtyard.business.subscription.vo.SaleDiscountVo">
+		INSERT  INTO  roomsource_salediscount( saleDiscountId, houseId, discountId, discountName, discount, efficacyDate,loseEfficacyDate)
+		VALUES (#{saleDiscountId},#{houseId},#{discountId},#{discountName},#{discount},#{efficacyDate},#{loseEfficacyDate})
+	</insert>
+
+
+	<!---获取房屋信息用于验证状态是否改变-->
+	<select id="getHouseVoById" resultType="com.bdcourtyard.business.subscription.vo.HouseVo">
+		select a.houseId,a.houseNo,a.estateId,a.saleStatus from house_house a where a.houseId =#{houseId}
+	</select>
+
+	<update id="updateStatus" parameterType="com.bdcourtyard.business.subscription.vo.SubInformatiomVo">
+		UPDATE  house_house set saleStatus =#{status} where houseId =#{houseId}
+	</update>
+
+
+
+
+
+
+
+
+
+
+	<select id="getRoomsourceSubscriptionsByConditions" resultType="com.bdcourtyard.business.subscription.model.RoomsourceSubscription">
+		SELECT
+		<include refid="columns" />
+		FROM roomsource_subscription
+		WHERE
+		1 =1
+		<foreach collection="conditions" item="condition">
+			{condition.exp}
+		</foreach>
+	</select>
+
+</mapper>

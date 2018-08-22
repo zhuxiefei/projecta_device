@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.user.dao.UserFeedbackDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		feedbackId,authorId,authorName,feedbackContent,feedbackType,feedbackStatus,clientModel,clientVersion,appType,appVersion,createTime,estateId
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertUserFeedback">
+	    <![CDATA[
+	        INSERT INTO user_feedback ( 
+	        	feedbackId,authorId,authorName,feedbackContent,feedbackType,feedbackStatus,clientModel,clientVersion,appType,appVersion,createTime,estateId
+	        ) VALUES (
+	        	#{feedbackId} ,
+	        	#{authorId} ,
+	        	#{authorName} ,
+	        	#{feedbackContent} ,
+	        	#{feedbackType} ,
+	        	#{feedbackStatus} ,
+	        	#{clientModel} ,
+	        	#{clientVersion} ,
+	        	#{appType} ,
+	        	#{appVersion} ,
+	        	#{createTime} ,
+	        	#{estateId} 
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertUserFeedbackBatch">
+	    <![CDATA[
+	        INSERT INTO user_feedback (
+	        	feedbackId,authorId,authorName,feedbackContent,feedbackType,feedbackStatus,clientModel,clientVersion,appType,appVersion,createTime,estateId
+	        ) VALUES 
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+						#{item.feedbackId} ,
+						#{item.authorId} ,
+						#{item.authorName} ,
+						#{item.feedbackContent} ,
+						#{item.feedbackType} ,
+						#{item.feedbackStatus} ,
+						#{item.clientModel} ,
+						#{item.clientVersion} ,
+						#{item.appType} ,
+						#{item.appVersion} ,
+						#{item.createTime} ,
+						#{item.estateId} 
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+				test="authorId != null and authorId != ''">
+				authorId = #{authorId}
+				,
+			</if>
+			<if
+				test="authorName != null and authorName != ''">
+				authorName = #{authorName}
+				,
+			</if>
+			<if
+				test="feedbackContent != null and feedbackContent != ''">
+				feedbackContent = #{feedbackContent}
+				,
+			</if>
+			<if test="feedbackType != null">
+				feedbackType = #{feedbackType} ,
+			</if>
+			<if test="feedbackStatus != null">
+				feedbackStatus = #{feedbackStatus} ,
+			</if>
+			<if
+				test="clientModel != null and clientModel != ''">
+				clientModel = #{clientModel}
+				,
+			</if>
+			<if
+				test="clientVersion != null and clientVersion != ''">
+				clientVersion = #{clientVersion}
+				,
+			</if>
+			<if test="appType != null">
+				appType = #{appType} ,
+			</if>
+			<if
+				test="appVersion != null and appVersion != ''">
+				appVersion = #{appVersion}
+				,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime} ,
+			</if>
+			<if
+				test="estateId != null and estateId != ''">
+				estateId = #{estateId}
+				
+			</if>
+		</set>
+	</sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+				test="userFeedback.authorId != null and userFeedback.authorId != ''">
+				authorId = #{userFeedback.authorId}				 
+			</if>
+			<if
+				test="userFeedback.authorName != null and userFeedback.authorName != ''">
+				 and authorName = #{userFeedback.authorName}				 
+			</if>
+			<if
+				test="userFeedback.feedbackContent != null and userFeedback.feedbackContent != ''">
+				 and feedbackContent = #{userFeedback.feedbackContent}				 
+			</if>
+			<if test="userFeedback.feedbackType != null">
+				 and  feedbackType = #{userFeedback.feedbackType} 
+			</if>
+			<if test="userFeedback.feedbackStatus != null">
+				 and  feedbackStatus = #{userFeedback.feedbackStatus} 
+			</if>
+			<if
+				test="userFeedback.clientModel != null and userFeedback.clientModel != ''">
+				 and clientModel = #{userFeedback.clientModel}				 
+			</if>
+			<if
+				test="userFeedback.clientVersion != null and userFeedback.clientVersion != ''">
+				 and clientVersion = #{userFeedback.clientVersion}				 
+			</if>
+			<if test="userFeedback.appType != null">
+				 and  appType = #{userFeedback.appType} 
+			</if>
+			<if
+				test="userFeedback.appVersion != null and userFeedback.appVersion != ''">
+				 and appVersion = #{userFeedback.appVersion}				 
+			</if>
+			<if test="userFeedback.createTime != null">
+				 and createTime = #{userFeedback.createTime} 
+			</if>
+			<if
+				test="userFeedback.estateId != null and userFeedback.estateId != ''">
+				 and estateId = #{userFeedback.estateId}				 
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateUserFeedbackById">
+		UPDATE user_feedback
+		<include refid="update_sql" />
+		WHERE
+		feedbackId =
+		#{feedbackId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteUserFeedbackById">
+		DELETE FROM user_feedback
+		WHERE
+		feedbackId = #{feedbackId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getUserFeedbackById" resultType="com.bdcourtyard.business.user.model.UserFeedback">
+		SELECT
+		<include refid="columns" />
+		FROM user_feedback
+		WHERE
+		feedbackId = #{feedbackId} 	</select>
+
+	<!-- selsect -->
+	<select id="getUserFeedbacks" resultType="com.bdcourtyard.business.user.model.UserFeedback">
+		SELECT
+		<include refid="columns" />
+		FROM user_feedback
+		<include refid="where_sql" />
+	</select>
+	
+			<!-- selsect -->
+	<select id="getUserFeedbacksForPage" resultType="com.bdcourtyard.business.user.model.UserFeedback">
+		SELECT
+		<include refid="columns" />
+		FROM user_feedback
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getUserFeedbacksByConditions" resultType="com.bdcourtyard.business.user.model.UserFeedback">
+		SELECT
+		<include refid="columns" />
+		FROM user_feedback
+		WHERE 
+			1 =1
+		<foreach collection="conditions" item="condition">
+			${condition.exp}
+		</foreach>
+	</select>
+
+	<select id="findAllFeedback" parameterType="java.lang.String" resultType="com.bdcourtyard.business.user.model.UserFeedback">
+		SELECT * FROM user_feedback WHERE authorId = #{empId} ORDER BY createTime DESC
+	</select>
+</mapper>

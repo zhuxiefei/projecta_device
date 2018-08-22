@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.house.dao.HouseHouseDao">
+
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+        <![CDATA[
+		houseId,houseNum,houseDesc,buildingId,unitId,typeId,openTime,orientation,decorationDegree,displayOrder,estateId,createTime,houseNo,saleStatus,floor
+	    ]]>
+    </sql>
+
+    <!--保存 -->
+    <insert id="insertHouseHouse">
+        <![CDATA[
+	        INSERT INTO house_house (
+	        	houseId,houseNum,houseDesc,buildingId,unitId,typeId,openTime,orientation,decorationDegree,displayOrder,estateId,createTime,houseNo,saleStatus,floor
+	        ) VALUES (
+	        	#{houseId} ,
+	        	#{houseNum} ,
+	        	#{houseDesc} ,
+	        	#{buildingId} ,
+	        	#{unitId} ,
+	        	#{typeId} ,
+	        	#{openTime} ,
+	        	#{orientation} ,
+	        	#{decorationDegree} ,
+	        	#{displayOrder} ,
+	        	#{estateId} ,
+	        	#{createTime} ,
+	        	#{houseNo} ,
+	        	#{saleStatus} ,
+	        	#{floor}
+	        )
+	    ]]>
+    </insert>
+
+    <!-- 批量保存 -->
+    <insert id="insertHouseHouseBatch">
+        <![CDATA[
+	        INSERT INTO house_house (
+	        	houseId,houseNum,houseDesc,buildingId,unitId,typeId,openTime,orientation,decorationDegree,displayOrder,estateId,createTime,houseNo,saleStatus,floor
+	        ) VALUES
+	         ]]>
+        <foreach item="item" collection="list" separator=",">
+            (
+            #{item.houseId} ,
+            #{item.houseNum} ,
+            #{item.houseDesc} ,
+            #{item.buildingId} ,
+            #{item.unitId} ,
+            #{item.typeId} ,
+            #{item.openTime} ,
+            #{item.orientation} ,
+            #{item.decorationDegree} ,
+            #{item.displayOrder} ,
+            #{item.estateId} ,
+            #{item.createTime} ,
+            #{item.houseNo} ,
+            #{item.saleStatus} ,
+            #{item.floor}
+            )
+        </foreach>
+
+    </insert>
+
+    <!-- update 条件组合 -->
+    <sql id="update_sql">
+        <set>
+            <if
+                    test="houseNum != null and houseNum != ''">
+                houseNum = #{houseNum}
+                ,
+            </if>
+            <if
+                    test="houseDesc != null and houseDesc != ''">
+                houseDesc = #{houseDesc}
+                ,
+            </if>
+            <if
+                    test="buildingId != null and buildingId != ''">
+                buildingId = #{buildingId}
+                ,
+            </if>
+            <if
+                    test="unitId != null and unitId != ''">
+                unitId = #{unitId}
+                ,
+            </if>
+            <if
+                    test="typeId != null and typeId != ''">
+                typeId = #{typeId}
+                ,
+            </if>
+            <if test="openTime != null">
+                openTime = #{openTime} ,
+            </if>
+            <if test="orientation != null">
+                orientation = #{orientation} ,
+            </if>
+            <if test="decorationDegree != null">
+                decorationDegree = #{decorationDegree} ,
+            </if>
+            <if test="displayOrder != null">
+                displayOrder = #{displayOrder} ,
+            </if>
+            <if
+                    test="estateId != null and estateId != ''">
+                estateId = #{estateId}
+                ,
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime} ,
+            </if>
+            <if
+                    test="houseNo != null and houseNo != ''">
+                houseNo = #{houseNo}
+                ,
+            </if>
+            <if test="saleStatus != null">
+                saleStatus = #{saleStatus} ,
+            </if>
+            <if test="floor != null">
+                floor = #{floor}
+            </if>
+        </set>
+    </sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+    <!-- where 条件组合 -->
+    <sql id="where_sql">
+        <where>
+            <if
+                    test="houseHouse.houseNum != null and houseHouse.houseNum != ''">
+                houseNum = #{houseHouse.houseNum}
+            </if>
+            <if
+                    test="houseHouse.houseDesc != null and houseHouse.houseDesc != ''">
+                and houseDesc = #{houseHouse.houseDesc}
+            </if>
+            <if
+                    test="houseHouse.buildingId != null and houseHouse.buildingId != ''">
+                and buildingId = #{houseHouse.buildingId}
+            </if>
+            <if
+                    test="houseHouse.unitId != null and houseHouse.unitId != ''">
+                and unitId = #{houseHouse.unitId}
+            </if>
+            <if
+                    test="houseHouse.typeId != null and houseHouse.typeId != ''">
+                and typeId = #{houseHouse.typeId}
+            </if>
+            <if test="houseHouse.openTime != null">
+                and openTime = #{houseHouse.openTime}
+            </if>
+            <if test="houseHouse.orientation != null">
+                and  orientation = #{houseHouse.orientation}
+            </if>
+            <if test="houseHouse.decorationDegree != null">
+                and  decorationDegree = #{houseHouse.decorationDegree}
+            </if>
+            <if test="houseHouse.displayOrder != null">
+                and  displayOrder = #{houseHouse.displayOrder}
+            </if>
+            <if
+                    test="houseHouse.estateId != null and houseHouse.estateId != ''">
+                and estateId = #{houseHouse.estateId}
+            </if>
+            <if test="houseHouse.createTime != null">
+                and createTime = #{houseHouse.createTime}
+            </if>
+            <if
+                    test="houseHouse.houseNo != null and houseHouse.houseNo != ''">
+                and houseNo = #{houseHouse.houseNo}
+            </if>
+            <if test="houseHouse.saleStatus != null">
+                and  saleStatus = #{houseHouse.saleStatus}
+            </if>
+            <if test="houseHouse.floor != null">
+                and  floor = #{houseHouse.floor}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 修改 -->
+    <update id="updateHouseHouseById">
+        UPDATE house_house
+        <include refid="update_sql" />
+        WHERE
+        houseId =
+        #{houseId} 	</update>
+
+    <!-- 根据ID删除 -->
+    <delete id="deleteHouseHouseById">
+        DELETE FROM house_house
+        WHERE
+        houseId = #{houseId} 	</delete>
+
+
+
+    <!-- selsect -->
+    <select id="getHouseHouseById" resultType="com.bdcourtyard.business.house.model.HouseHouse">
+        SELECT
+        <include refid="columns" />
+        FROM house_house
+        WHERE
+        houseId = #{houseId} 	</select>
+
+    <!-- selsect -->
+    <select id="getHouseHouses" parameterType="com.bdcourtyard.business.house.domain.FindAllHousesReq"
+            resultType="com.bdcourtyard.business.house.domain.FindAllHousesResp">
+        select
+        hh.houseId,
+        (select buildingName from house_building hb where hb.buildingId=hh.buildingId) as buildingName,
+        (select unitName from house_building_unit hu where hu.unitId=hh.unitId) as unitName,
+        hh.houseNum,
+        ht.typeName,
+        hh.createTime,
+        hh.openTime,
+        ht.floorArea,
+        ht.interFloorArea,
+        hh.displayOrder AS displayOrder
+        from house_house hh
+        LEFT JOIN house_type ht ON ht.typeId=hh.typeId
+        <where>
+            <if test="houseNum != null and houseNum != ''">
+                AND hh.houseNum like CONCAT('%',#{houseNum},'%')
+            </if>
+            <if test="isOthers == 1">
+                AND hh.buildingId is NULL and hh.unitId is NULL
+            </if>
+            <if test="buildingId != null">
+                AND hh.buildingId = #{buildingId}
+            </if>
+            <if test="unitId != null">
+                AND hh.unitId = #{unitId}
+            </if>
+            <if test="typeName != null and typeName != ''">
+                AND ht.typeName like CONCAT('%',#{typeName},'%')
+            </if>
+            AND hh.estateId = #{estateId}
+        </where>
+        ORDER BY hh.displayOrder ASC,hh.createTime DESC
+    </select>
+
+    <!-- selsect -->
+    <select id="getHouseHousesForPage" resultType="com.bdcourtyard.business.house.model.HouseHouse">
+        SELECT
+        <include refid="columns"/>
+        FROM house_house
+        <include refid="where_sql"/>
+    </select>
+
+    <select id="getHouseHousesByConditions" resultType="com.bdcourtyard.business.house.model.HouseHouse">
+        SELECT
+        <include refid="columns"/>
+        FROM house_house
+        WHERE
+        1 =1
+        <foreach collection="conditions" item="condition">
+            ${condition.exp}
+        </foreach>
+    </select>
+
+    <select id="findByTypeId" parameterType="java.lang.String"
+            resultType="com.bdcourtyard.business.house.model.HouseHouse">
+		SELECT * FROM house_house WHERE typeId = #{typeId}
+	</select>
+
+    <update id="updateTypeIdByHouseList">
+        UPDATE house_house
+        SET typeId = NULL
+        where houseId IN
+        <foreach collection="list" item="house" open="(" separator="," close=")">
+            #{house.houseId}
+        </foreach>
+    </update>
+
+    <select id="selectByBuildingId" parameterType="java.lang.String"
+            resultType="com.bdcourtyard.business.house.model.HouseHouse">
+        select * from house_house
+        where buildingId = #{buildingId}
+    </select>
+
+    <select id="selectByUnitId" parameterType="java.lang.String"
+            resultType="com.bdcourtyard.business.house.model.HouseHouse">
+        select * from house_house
+        where unitId = #{unitId}
+    </select>
+    <select id="findHouseOrTypePageParams" parameterType="java.lang.String"
+            resultType="com.bdcourtyard.business.houseprice.vo.HouseOrTypePage">
+        select DISTINCT a.*,b.*
+        from house_house a left JOIN house_type b on a.typeId=b.typeId
+         WHERE
+            a.buildingId=#{buildingId}
+            AND a.unitId=#{unitId}
+
+    </select>
+    <select id="findHouseByParams" parameterType="java.lang.String"
+            resultType="com.bdcourtyard.business.house.model.HouseHouse">
+        select
+        *
+        from house_house
+        where 1=1
+        <choose>
+            <when test="buildingId == null or buildingId == ''">
+                AND buildingId is NULL
+            </when>
+            <otherwise>
+                AND buildingId = #{buildingId}
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="unitId == null or unitId == ''">
+                AND unitId is NULL
+            </when>
+            <otherwise>
+                AND unitId = #{unitId}
+            </otherwise>
+        </choose>
+        AND houseNum = #{houseNum}
+        AND estateId = #{estateId}
+    </select>
+
+    <delete id="deleteByHouseIds" parameterType="java.lang.String">
+        delete from house_house
+        where houseId in
+        <foreach collection="array" item="houseId" open="(" separator="," close=")">
+            #{houseId}
+        </foreach>
+    </delete>
+
+    <select id="exportByHouseIds" parameterType="java.lang.String"
+            resultType="com.bdcourtyard.business.house.domain.FindAllHousesResp">
+        select
+        hh.houseId,
+        (select buildingName from house_building hb where hb.buildingId=hh.buildingId) as buildingName,
+        (select unitName from house_building_unit hu where hu.unitId=hh.unitId) as unitName,
+        hh.houseNum,
+        ht.typeName,
+        hh.createTime,
+        hh.openTime,
+        ht.floorArea,
+        ht.interFloorArea,
+        hh.displayOrder AS displayOrder
+        from house_house hh
+        LEFT JOIN house_type ht ON ht.typeId=hh.typeId
+        WHERE hh.houseId IN
+        <foreach collection="array" item="houseId" open="(" separator="," close=")">
+            #{houseId}
+        </foreach>
+        ORDER BY hh.displayOrder ASC,hh.createTime DESC
+    </select>
+
+    <update id="updateOpenTime">
+        UPDATE house_house SET openTime = #{openTime}
+        WHERE houseId IN
+        <foreach collection="houseIds" item="houseId" open="(" separator="," close=")">
+            #{houseId}
+        </foreach>
+    </update>
+
+    <select id="findHouseById" parameterType="java.lang.String"
+            resultType="com.bdcourtyard.business.house.domain.FindHouseResp">
+        SELECT
+        h.houseId,h.buildingId,h.decorationDegree,h.displayOrder,
+        h.floor,h.houseNum,h.openTime,h.orientation,h.typeId,h.unitId,h.createTime,
+        (SELECT u.unitName FROM house_building_unit u WHERE u.unitId = h.unitId) AS unitName,
+        (SELECT b.buildingName FROM house_building b WHERE b.buildingId = h.buildingId) AS buildingName,
+        (SELECT t.typeName FROM house_type t WHERE t.typeId = h.typeId) AS typeName,
+        (SELECT t.floorArea FROM house_type t WHERE t.typeId = h.typeId) AS floorArea,
+        (SELECT t.interFloorArea FROM house_type t WHERE t.typeId = h.typeId) AS interFloorArea
+        FROM house_house h
+        WHERE h.houseId = #{houseId}
+    </select>
+</mapper>

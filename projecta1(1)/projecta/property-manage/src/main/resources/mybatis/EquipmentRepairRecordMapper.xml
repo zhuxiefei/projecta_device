@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.device.dao.EquipmentRepairRecordDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		recordId,equipmentId,equipmentOperator,operatorPhone,repairDesc,repairExpense,repairTime,qualityPeriod,createTime,updateTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertEquipmentRepairRecord">
+	    <![CDATA[
+	        INSERT INTO equipment_repair_record ( 
+	        	recordId,equipmentId,equipmentOperator,operatorPhone,repairDesc,repairExpense,repairTime,qualityPeriod,createTime,updateTime
+	        ) VALUES (
+	        	#{recordId} ,
+	        	#{equipmentId} ,
+	        	#{equipmentOperator} ,
+	        	#{operatorPhone} ,
+	        	#{repairDesc} ,
+	        	#{repairExpense} ,
+	        	#{repairTime} ,
+	        	#{qualityPeriod} ,
+	        	now()
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertEquipmentRepairRecordBatch">
+	    <![CDATA[
+	        INSERT INTO equipment_repair_record (
+	        	recordId,equipmentId,equipmentOperator,operatorPhone,repairDesc,repairExpense,repairTime,qualityPeriod,createTime,updateTime
+	        ) VALUES 
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+						#{item.recordId} ,
+						#{item.equipmentId} ,
+						#{item.equipmentOperator} ,
+						#{item.operatorPhone} ,
+						#{item.repairDesc} ,
+						#{item.repairExpense} ,
+						#{item.repairTime} ,
+						#{item.qualityPeriod} ,
+						#{item.createTime} ,
+						#{item.updateTime} 
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+				test="equipmentId != null and equipmentId != ''">
+				equipmentId = #{equipmentId}
+				,
+			</if>
+			<if
+				test="equipmentOperator != null and equipmentOperator != ''">
+				equipmentOperator = #{equipmentOperator}
+				,
+			</if>
+			<if
+				test="operatorPhone != null and operatorPhone != ''">
+				operatorPhone = #{operatorPhone}
+				,
+			</if>
+			<if
+				test="repairDesc != null and repairDesc != ''">
+				repairDesc = #{repairDesc}
+				,
+			</if>
+			<if
+				test="repairExpense != null and repairExpense != ''">
+				repairExpense = #{repairExpense}
+				,
+			</if>
+			<if test="repairTime != null">
+				repairTime = #{repairTime} ,
+			</if>
+			<if
+				test="qualityPeriod != null and qualityPeriod != ''">
+				qualityPeriod = #{qualityPeriod}
+				,
+			</if>
+
+			<if test="1!=0">
+				updateTime = now()
+			</if>
+		</set>
+	</sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+				test="equipmentRepairRecord.equipmentId != null and equipmentRepairRecord.equipmentId != ''">
+				equipmentId = #{equipmentRepairRecord.equipmentId}				 
+			</if>
+			<if
+				test="equipmentRepairRecord.equipmentOperator != null and equipmentRepairRecord.equipmentOperator != ''">
+				 and equipmentOperator = #{equipmentRepairRecord.equipmentOperator}				 
+			</if>
+			<if
+				test="equipmentRepairRecord.operatorPhone != null and equipmentRepairRecord.operatorPhone != ''">
+				 and operatorPhone = #{equipmentRepairRecord.operatorPhone}				 
+			</if>
+			<if
+				test="equipmentRepairRecord.repairDesc != null and equipmentRepairRecord.repairDesc != ''">
+				 and repairDesc = #{equipmentRepairRecord.repairDesc}				 
+			</if>
+			<if
+				test="equipmentRepairRecord.repairExpense != null and equipmentRepairRecord.repairExpense != ''">
+				 and repairExpense = #{equipmentRepairRecord.repairExpense}				 
+			</if>
+			<if test="equipmentRepairRecord.repairTime != null">
+				 and repairTime = #{equipmentRepairRecord.repairTime} 
+			</if>
+			<if
+				test="equipmentRepairRecord.qualityPeriod != null and equipmentRepairRecord.qualityPeriod != ''">
+				 and qualityPeriod = #{equipmentRepairRecord.qualityPeriod}				 
+			</if>
+
+			<if test="equipmentRepairRecord.updateTime != null">
+				 and updateTime = #{equipmentRepairRecord.updateTime} 
+			</if>
+		</where>
+	</sql>
+
+	<!--更新维修次数-->
+	<!-- 修改 -->
+	<update id="updateEquipmentRepairNumber">
+		UPDATE patrol_equipment SET repairNumber = repairNumber+1
+		WHERE
+		equipmentId =#{equipmentId}
+		</update>
+
+
+	<!-- 修改 -->
+	<update id="updateEquipmentRepairRecordById">
+		UPDATE equipment_repair_record
+		<include refid="update_sql" />
+		WHERE
+		recordId =
+		#{recordId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteEquipmentRepairRecordById">
+		DELETE FROM equipment_repair_record
+		WHERE
+		recordId = #{recordId} 	</delete>
+
+
+	<!-- selsect -->
+	<select id="getPatrolEquipmentByNo" resultType="com.bdcourtyard.business.device.model.PatrolEquipment" parameterType="java.util.Map">
+		SELECT
+		a.equipmentId,
+		a.equipmentNo,
+		a.equipmentName,
+		(
+		SELECT
+		b.typeName
+		FROM
+		equipment_type b
+		WHERE
+		a.equipmentType = b.typeId
+		) AS equipmentType,
+		a.isCheck,
+		a.equipmentLocation,
+		a.equipmentCreateTime,
+		a.qualityPeriod,
+		a.unit,
+		deadline,
+		equipmentProducer,
+		producerPhone,
+		a.equipmentOperator,
+		a.operatorPhone
+		FROM
+		patrol_equipment a
+		<where>
+			<if test="equipmentNo!=null and equipmentNo!=''">
+				a.equipmentNo LIKE '%${equipmentNo}%'
+			</if>
+			<if test="estateId!=null and estateId!=''">
+				AND a.estateId = #{estateId}
+			</if>
+		</where>
+	</select>
+
+
+	<!-- selsect -->
+	<select id="getEquipmentRepairRecordById" resultType="com.bdcourtyard.business.device.vo.EquipmentRepairRecordDetail" parameterType="java.lang.String">
+		SELECT
+		err.recordId,
+		err.equipmentId,
+		err.equipmentOperator,
+		err.operatorPhone,
+		err.repairExpense,
+		err.repairTime,
+		err.qualityPeriod,
+		(
+		SELECT
+		et.typeName
+		FROM
+		equipment_type et
+		WHERE
+		pe.equipmentType = et.typeId
+		)
+		pe.equipmentNo,
+		pe.equipmentName,
+		pe.equipmentLocation,
+		pe.isCheck,
+		pe.equipmentCreateTime,
+		pe.deadline,
+		pe.equipmentProducer,
+		pe.producerPhone,
+		pe.unit,
+		pe.qualityPeriod AS qualityPeriodDevice
+
+		FROM equipment_repair_record err
+		LEFT JOIN patrol_equipment pe ON pe.equipmentId = err.equipmentId
+
+		WHERE
+		err.recordId = #{recordId}
+	</select>
+
+	<!-- selsect -->
+	<select id="getEquipmentRepairRecords" resultType="com.bdcourtyard.business.device.model.EquipmentRepairRecord">
+		SELECT
+		<include refid="columns" />
+		FROM equipment_repair_record
+		<include refid="where_sql" />
+	</select>
+	
+			<!-- selsect -->
+	<select id="getEquipmentRepairRecordsForPage" resultType="com.bdcourtyard.business.device.vo.EquipmentRepairRecordResponse" parameterType="com.bdcourtyard.business.device.vo.EquipmentRepairRecordRequest">
+		SELECT
+		pe.equipment,
+		pe.equipmentNo,
+		pe.equipmentName,
+		pe.equipmentLocation,
+		(SELECT t.typeName FROM equipment_type t where t.typeId = pe.equipmentType) as equipmentType,
+		err.recordId,
+		err.repairTime,err.equipmentOperator,
+		err.operatorPhone,
+		err.repairExpense,
+		err.qualityPeriod
+		FROM equipment_repair_record err left JOIN patrol_equipment pe ON err.equipmentId = pe.equipmentId
+		<where>
+
+			<if test="startTime!=null and startTime!=''">
+				<![CDATA[    err.repairTime >= #{startTime} ]]>
+			</if>
+			<if test="endTime!=null and endTime!=''">
+				<![CDATA[    err.repairTime <= #{endTime} ]]>
+			</if>
+			<if test="estateId!=null and estateId!=''">
+				and pe.estateId = #{estateId}
+			</if>
+			<if test="equipmentId!=null and equipmentId!=''">
+				and re.equipmentId = #{equipmentId}
+			</if>
+			<if test="equipmentType!=null and equipmentType !='0' and equipmentType !=0">
+				and pa.equipmentType = #{equipmentType}
+			</if>
+
+			<if test="keywords!=null and keywords!=''">
+				and (pa.equipmentNo like '%${keywords}%'OR pa.equipmentName like '%${keywords}%'OR pa.equipmentLocation like '%${keywords}%')
+			</if>
+		</where>
+		order by err.repairTime dec
+	</select>
+
+	<select id="getEquipmentRepairRecordsByConditions" resultType="com.bdcourtyard.business.device.model.EquipmentRepairRecord">
+		SELECT
+		<include refid="columns" />
+		FROM equipment_repair_record
+		WHERE 
+			1 =1
+		<foreach collection="conditions" item="condition">
+			{condition.exp}
+		</foreach>
+	</select>
+
+</mapper>

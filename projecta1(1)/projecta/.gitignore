@@ -1,0 +1,6 @@
+*.iml
+common-tools/target/
+property-manage/target/
+.idea
+customer-manage/target/
+office-automation/target/

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.account.dao.EmployeeAccountRelaDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		acctName,employeeId,createTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertEmployeeAccountRela">
+	    <![CDATA[
+	        INSERT INTO employee_account_rela ( 
+	        	acctName,employeeId,createTime
+	        ) VALUES (
+	        	#{acctName} ,
+	        	#{employeeId} ,
+	        	#{createTime} 
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertEmployeeAccountRelaBatch">
+	    <![CDATA[
+	        INSERT INTO employee_account_rela (
+	        	acctName,employeeId,createTime
+	        ) VALUES 
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+						#{item.acctName} ,
+						#{item.employeeId} ,
+						#{item.createTime} 
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if test="createTime != null">
+				createTime = #{createTime} 
+			</if>
+		</set>
+	</sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if test="employeeAccountRela.createTime != null">
+				createTime = #{employeeAccountRela.createTime} 
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateEmployeeAccountRelaById">
+		UPDATE employee_account_rela
+		<include refid="update_sql" />
+		WHERE
+		acctName =
+		#{acctName}  AND
+		employeeId =
+		#{employeeId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteEmployeeAccountRelaById">
+		DELETE FROM employee_account_rela
+		WHERE
+		acctName = #{acctName}  AND
+		employeeId = #{employeeId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getEmployeeAccountRelaById" resultType="com.bdcourtyard.business.account.model.EmployeeAccountRela">
+		SELECT
+		<include refid="columns" />
+		FROM employee_account_rela
+		WHERE
+		acctName = #{acctName}  AND
+		employeeId = #{employeeId} 	</select>
+
+	<!-- selsect -->
+	<select id="getEmployeeAccountRelas" resultType="com.bdcourtyard.business.account.model.EmployeeAccountRela">
+		SELECT
+		<include refid="columns" />
+		FROM employee_account_rela
+		<include refid="where_sql" />
+	</select>
+	
+			<!-- selsect -->
+	<select id="getEmployeeAccountRelasForPage" resultType="com.bdcourtyard.business.account.model.EmployeeAccountRela">
+		SELECT
+		<include refid="columns" />
+		FROM employee_account_rela
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getEmployeeAccountRelasByConditions" resultType="com.bdcourtyard.business.account.model.EmployeeAccountRela">
+		SELECT
+		<include refid="columns" />
+		FROM employee_account_rela
+		WHERE 
+			1 =1
+		<foreach collection="conditions" item="condition">
+			${condition.exp}
+		</foreach>
+	</select>
+
+	<!-- selsect -->
+	<select id="getEmployeeAccountRelaByEmpId" resultType="com.bdcourtyard.business.account.model.EmployeeAccountRela">
+		SELECT
+		<include refid="columns" />
+		FROM employee_account_rela
+		WHERE
+		employeeId = #{employeeId}
+	</select>
+
+	<!-- selsect -->
+	<select id="getEmployeeAccountRelaByAcctName" resultType="com.bdcourtyard.business.account.model.EmployeeAccountRela">
+		SELECT
+		<include refid="columns" />
+		FROM employee_account_rela
+		WHERE
+		acctName = #{acctName}
+	</select>
+
+	<delete id="deleteByEmpIds">
+		DELETE FROM employee_account_rela WHERE
+		employeeId IN
+		<foreach collection="list" item="employeeId" open="(" separator="," close=")">
+			#{employeeId}
+		</foreach>
+	</delete>
+
+	<select id="findByRoleId" parameterType="java.lang.String" resultType="com.bdcourtyard.business.account.model.EmployeeAccountRela">
+		SELECT * FROM employee_account_rela WHERE employeeId IN
+		(SELECT employeeId FROM company_employee WHERE roleId = #{roleId})
+	</select>
+</mapper>

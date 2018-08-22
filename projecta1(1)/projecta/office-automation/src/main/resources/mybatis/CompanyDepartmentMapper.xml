@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.dept.dao.CompanyDepartmentDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		departmentId,companyId,departmentName,departmentDesc,parentDepartment,createTime,updateTime,depId,depth,estateId
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertCompanyDepartment">
+	    <![CDATA[
+	        INSERT INTO company_department ( 
+	        	departmentId,companyId,departmentName,departmentDesc,parentDepartment,createTime,updateTime,depId,depth,estateId
+	        ) VALUES (
+	        	#{departmentId} ,
+	        	#{companyId} ,
+	        	#{departmentName} ,
+	        	#{departmentDesc} ,
+	        	#{parentDepartment} ,
+	        	#{createTime} ,
+	        	#{updateTime} ,
+	        	#{depId} ,
+	        	#{depth} ,
+	        	#{estateId} 
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertCompanyDepartmentBatch">
+	    <![CDATA[
+	        INSERT INTO company_department (
+	        	departmentId,companyId,departmentName,departmentDesc,parentDepartment,createTime,updateTime,depId,depth,estateId
+	        ) VALUES 
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+						#{item.departmentId} ,
+						#{item.companyId} ,
+						#{item.departmentName} ,
+						#{item.departmentDesc} ,
+						#{item.parentDepartment} ,
+						#{item.createTime} ,
+						#{item.updateTime} ,
+						#{item.depId} ,
+						#{item.depth} ,
+						#{item.estateId} 
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+				test="companyId != null and companyId != ''">
+				companyId = #{companyId}
+				,
+			</if>
+			<if
+				test="departmentName != null and departmentName != ''">
+				departmentName = #{departmentName}
+				,
+			</if>
+			<if
+				test="departmentDesc != null and departmentDesc != ''">
+				departmentDesc = #{departmentDesc}
+				,
+			</if>
+			<if
+				test="parentDepartment != null and parentDepartment != ''">
+				parentDepartment = #{parentDepartment}
+				,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime} ,
+			</if>
+			<if test="updateTime != null">
+				updateTime = #{updateTime} ,
+			</if>
+			<if
+				test="depId != null and depId != ''">
+				depId = #{depId}
+				,
+			</if>
+			<if test="depth != null">
+				depth = #{depth} ,
+			</if>
+			<if
+				test="estateId != null and estateId != ''">
+				estateId = #{estateId}
+				
+			</if>
+		</set>
+	</sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+				test="companyDepartment.companyId != null and companyDepartment.companyId != ''">
+				companyId = #{companyDepartment.companyId}				 
+			</if>
+			<if
+				test="companyDepartment.departmentName != null and companyDepartment.departmentName != ''">
+				 and departmentName = #{companyDepartment.departmentName}				 
+			</if>
+			<if
+				test="companyDepartment.departmentDesc != null and companyDepartment.departmentDesc != ''">
+				 and departmentDesc = #{companyDepartment.departmentDesc}				 
+			</if>
+			<if
+				test="companyDepartment.parentDepartment != null and companyDepartment.parentDepartment != ''">
+				 and parentDepartment = #{companyDepartment.parentDepartment}				 
+			</if>
+			<if test="companyDepartment.createTime != null">
+				 and createTime = #{companyDepartment.createTime} 
+			</if>
+			<if test="companyDepartment.updateTime != null">
+				 and updateTime = #{companyDepartment.updateTime} 
+			</if>
+			<if
+				test="companyDepartment.depId != null and companyDepartment.depId != ''">
+				 and depId = #{companyDepartment.depId}				 
+			</if>
+			<if test="companyDepartment.depth != null">
+				 and  depth = #{companyDepartment.depth} 
+			</if>
+			<if
+				test="companyDepartment.estateId != null and companyDepartment.estateId != ''">
+				 and estateId = #{companyDepartment.estateId}				 
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateCompanyDepartmentById">
+		UPDATE company_department
+		<include refid="update_sql" />
+		WHERE
+		departmentId =
+		#{departmentId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteCompanyDepartmentById">
+		DELETE FROM company_department
+		WHERE
+		departmentId = #{departmentId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getCompanyDepartmentById" resultType="com.bdcourtyard.business.dept.model.CompanyDepartment">
+		SELECT
+		<include refid="columns" />
+		FROM company_department
+		WHERE
+		departmentId = #{departmentId} 	</select>
+
+	<!-- selsect -->
+	<select id="getCompanyDepartments" resultType="com.bdcourtyard.business.dept.model.CompanyDepartment">
+		SELECT
+		<include refid="columns" />
+		FROM company_department
+		<include refid="where_sql" />
+	</select>
+	
+			<!-- selsect -->
+	<select id="getCompanyDepartmentsForPage" resultType="com.bdcourtyard.business.dept.model.CompanyDepartment">
+		SELECT
+		<include refid="columns" />
+		FROM company_department
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getCompanyDepartmentsByConditions" resultType="com.bdcourtyard.business.dept.model.CompanyDepartment">
+		SELECT
+		<include refid="columns" />
+		FROM company_department
+		WHERE 
+			1 =1
+		<foreach collection="conditions" item="condition">
+			${condition.exp}
+		</foreach>
+	</select>
+
+	<select id="findNewestOneDepth" resultType="com.bdcourtyard.business.dept.model.CompanyDepartment">
+		SELECT * FROM company_department
+		WHERE depth = 1 AND estateId = #{estateId}
+		ORDER BY depId DESC
+		LIMIT 1;
+	</select>
+
+	<select id="findByParentIdAndName" resultType="com.bdcourtyard.business.dept.model.CompanyDepartment">
+		SELECT * FROM company_department
+		WHERE departmentName = #{name} AND
+		<if test="parentId == null || parentId == ''">
+			parentDepartment IS NULL
+		</if>
+		<if test="parentId != null">
+			parentDepartment = #{parentId}
+		</if>
+		AND estateId = #{estateId}
+	</select>
+
+	<select id="findByParentId" resultType="com.bdcourtyard.business.dept.model.CompanyDepartment">
+		SELECT * FROM company_department WHERE parentDepartment = #{parentId} ORDER BY createTime DESC
+	</select>
+
+	<select id="findByNameAndDepId" resultType="com.bdcourtyard.business.dept.model.CompanyDepartment">
+		SELECT * FROM company_department
+		WHERE departmentName = #{name} AND
+		depId LIKE concat(#{depId},"%")
+		limit 1
+	</select>
+
+	<delete id="deleteByDepIdAndDepth">
+		DELETE FROM company_department
+		WHERE depId LIKE concat(#{depId},"%")
+	</delete>
+
+	<select id="findDeptDetail" resultType="com.bdcourtyard.business.dept.model.CompanyDepartment"
+			parameterType="java.lang.String">
+		SELECT
+			departmentId,departmentName,departmentDesc,parentDepartment
+	  	FROM company_department
+		WHERE departmentId=#{departmentId}
+	</select>
+
+	<select id="findParentDeptList" parameterType="java.lang.String"
+			resultType="com.bdcourtyard.business.dept.model.CompanyDepartment">
+		SELECT departmentId,departmentName,departmentDesc,parentDepartment,depth,depId
+		FROM company_department
+		WHERE depth = 1 AND estateId = #{estateId}
+		ORDER BY createTime DESC
+	</select>
+</mapper>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.dept.dao.CompanyCompanyDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		companyId,companyName,createTime,updateTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertCompanyCompany">
+	    <![CDATA[
+	        INSERT INTO company_company ( 
+	        	companyId,companyName,createTime,updateTime
+	        ) VALUES (
+	        	#{companyId} ,
+	        	#{companyName} ,
+	        	#{createTime} ,
+	        	#{updateTime} 
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertCompanyCompanyBatch">
+	    <![CDATA[
+	        INSERT INTO company_company (
+	        	companyId,companyName,createTime,updateTime
+	        ) VALUES 
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+						#{item.companyId} ,
+						#{item.companyName} ,
+						#{item.createTime} ,
+						#{item.updateTime} 
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+				test="companyName != null and companyName != ''">
+				companyName = #{companyName}
+				,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime} ,
+			</if>
+			<if test="updateTime != null">
+				updateTime = #{updateTime} 
+			</if>
+		</set>
+	</sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+				test="companyCompany.companyName != null and companyCompany.companyName != ''">
+				companyName = #{companyCompany.companyName}				 
+			</if>
+			<if test="companyCompany.createTime != null">
+				 and createTime = #{companyCompany.createTime} 
+			</if>
+			<if test="companyCompany.updateTime != null">
+				 and updateTime = #{companyCompany.updateTime} 
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateCompanyCompanyById">
+		UPDATE company_company
+		<include refid="update_sql" />
+		WHERE
+		companyId =
+		#{companyId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteCompanyCompanyById">
+		DELETE FROM company_company
+		WHERE
+		companyId = #{companyId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getCompanyCompanyById" resultType="com.bdcourtyard.business.dept.model.CompanyCompany">
+		SELECT
+		<include refid="columns" />
+		FROM company_company
+		WHERE
+		companyId = #{companyId} 	</select>
+
+	<!-- selsect -->
+	<select id="getCompanyCompanys" resultType="com.bdcourtyard.business.dept.model.CompanyCompany">
+		SELECT
+		<include refid="columns" />
+		FROM company_company
+		<include refid="where_sql" />
+	</select>
+	
+			<!-- selsect -->
+	<select id="getCompanyCompanysForPage" resultType="com.bdcourtyard.business.dept.model.CompanyCompany">
+		SELECT
+		<include refid="columns" />
+		FROM company_company
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getCompanyCompanysByConditions" resultType="com.bdcourtyard.business.dept.model.CompanyCompany">
+		SELECT
+		<include refid="columns" />
+		FROM company_company
+		WHERE 
+			1 =1
+		<foreach collection="conditions" item="condition">
+			${condition.exp}
+		</foreach>
+	</select>
+
+	<select id="findOne" resultType="com.bdcourtyard.business.dept.model.CompanyCompany">
+		SELECT * FROM company_company limit 1
+	</select>
+</mapper>

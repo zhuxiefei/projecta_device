@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.onlineHouse.dao.AssistantOnlineHouseDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		onlineId,houseType,adminId,createTime,estateId
+	    ]]>
+	</sql>
+
+
+	<!--保存 -->
+	<insert id="insertAssistantOnlineHouse">
+	    <![CDATA[
+	        INSERT INTO assistant_onlineHouse ( 
+	        	onlineId,houseType,adminId,createTime,estateId
+	        ) VALUES (
+	        	#{onlineId} ,
+	        	#{houseType} ,
+	        	#{adminId} ,
+	        	#{createTime} ,
+	        	#{estateId} 
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertAssistantOnlineHouseBatch">
+	    <![CDATA[
+	        INSERT INTO assistant_onlineHouse (
+	        	onlineId,houseType,adminId,createTime,estateId
+	        ) VALUES 
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+						#{item.onlineId} ,
+						#{item.houseType} ,
+						#{item.adminId} ,
+						#{item.createTime} ,
+						#{item.estateId} 
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+				test="houseType != null and houseType != ''">
+				houseType = #{houseType}
+				,
+			</if>
+			<if
+				test="adminId != null and adminId != ''">
+				adminId = #{adminId}
+				,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime} ,
+			</if>
+			<if
+				test="estateId != null and estateId != ''">
+				estateId = #{estateId}
+				
+			</if>
+		</set>
+	</sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+				test="assistantOnlineHouse.houseType != null and assistantOnlineHouse.houseType != ''">
+				houseType = #{assistantOnlineHouse.houseType}				 
+			</if>
+			<if
+				test="assistantOnlineHouse.adminId != null and assistantOnlineHouse.adminId != ''">
+				 and adminId = #{assistantOnlineHouse.adminId}				 
+			</if>
+			<if test="assistantOnlineHouse.createTime != null">
+				 and createTime = #{assistantOnlineHouse.createTime} 
+			</if>
+			<if
+				test="assistantOnlineHouse.estateId != null and assistantOnlineHouse.estateId != ''">
+				 and estateId = #{assistantOnlineHouse.estateId}				 
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateAssistantOnlineHouseById">
+		UPDATE assistant_onlineHouse
+		<include refid="update_sql" />
+		WHERE
+		onlineId =
+		#{onlineId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteAssistantOnlineHouseById">
+		DELETE FROM assistant_onlineHouse
+		WHERE
+		onlineId = #{onlineId} 	</delete>
+
+
+	<!-- 户型名称不相同-->
+	<select id="selectAllAssistantOnlineHouses" resultType="com.bdcourtyard.business.onlineHouse.model.AssistantOnlineHouse">
+		SELECT
+		<include refid="columns" />
+		FROM assistant_onlineHouse
+		WHERE houseType = #{houseType}
+	</select>
+
+	<!--模糊查询 -->
+	<select id="getAssistantOnlineHouses_new" resultType="com.bdcourtyard.business.onlineHouse.model.AssistantOnlineHouse" parameterType="java.util.HashMap">
+		SELECT
+		ah.onlineId,ah.houseType,
+		ce.employeeName as adminId,
+		ah.createTime,ah.estateId
+		FROM assistant_onlineHouse ah
+		left join company_employee ce on ah.adminId = ce.employeeId
+		where 1=1
+		<if test="houseType!=null and houseType!=''">
+			and ah.houseType like CONCAT('%',#{houseType},'%' )
+		</if>
+		<if test="startTime != null and startTime != ''">
+			and ah.createTime &gt;= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and ah.createTime &lt;= #{endTime}
+		</if>
+		ORDER by ah.createTime desc
+	</select>
+
+	<!-- selsect -->
+	<select id="getAssistantOnlineHouseById" resultType="com.bdcourtyard.business.onlineHouse.model.AssistantOnlineHouse">
+		SELECT
+		ah.onlineId,ah.houseType,
+		ce.employeeName as adminId,
+		ah.createTime,ah.estateId
+		FROM assistant_onlineHouse ah
+		left join company_employee ce on ah.adminId = ce.employeeId
+		WHERE
+		onlineId = #{onlineId} 	</select>
+
+	<!-- selsect -->
+	<select id="getAssistantOnlineHouses" resultType="com.bdcourtyard.business.onlineHouse.model.AssistantOnlineHouse">
+		SELECT
+		<include refid="columns" />
+		FROM assistant_onlineHouse
+		<include refid="where_sql" />
+	</select>
+	
+			<!-- selsect -->
+	<select id="getAssistantOnlineHousesForPage" resultType="com.bdcourtyard.business.onlineHouse.model.AssistantOnlineHouse">
+		SELECT
+		<include refid="columns" />
+		FROM assistant_onlineHouse
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getAssistantOnlineHousesByConditions" resultType="com.bdcourtyard.business.onlineHouse.model.AssistantOnlineHouse">
+		SELECT
+		<include refid="columns" />
+		FROM assistant_onlineHouse
+		WHERE 
+			1 =1
+		<foreach collection="conditions" item="condition">
+			${condition.exp}
+		</foreach>
+	</select>
+
+</mapper>

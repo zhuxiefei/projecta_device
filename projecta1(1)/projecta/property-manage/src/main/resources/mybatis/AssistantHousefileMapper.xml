@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.housing.dao.AssistantHousefileDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		propertyId,fileId,fileType,createTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertAssistantHousefile">
+	    <![CDATA[
+	        INSERT INTO assistant_housefile ( 
+	        	propertyId,fileId,fileType,createTime
+	        ) VALUES (
+	        	#{propertyId} ,
+	        	#{fileId} ,
+	        	#{fileType} ,
+	        	#{createTime}
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertAssistantHousefileBatch">
+		<![CDATA[
+	        INSERT INTO assistant_housefile (
+	        	propertyId,fileId,fileType,createTime
+	        ) VALUES
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+			#{item.propertyId} ,
+			#{item.fileId} ,
+			#{item.fileType} ,
+			#{item.createTime}
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if test="fileType != null">
+				fileType = #{fileType} ,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime}
+			</if>
+		</set>
+	</sql>
+
+	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if test="assistantHousefile.propertTtype != null">
+				propertTtype = #{assistantHousefile.propertTtype}
+			</if>
+			<if test="assistantHousefile.fileType != null">
+				AND fileType = #{assistantHousefile.fileType}
+			</if>
+			<if test="assistantHousefile.createTime != null">
+				and createTime = #{assistantHousefile.createTime}
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateAssistantHousefileById">
+		UPDATE assistant_housefile
+		<include refid="update_sql" />
+		WHERE
+		propertyId =
+		#{propertyId}  AND
+		fileId =
+		#{fileId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteAssistantHousefileById">
+		DELETE FROM assistant_housefile
+		WHERE
+		propertyId = #{propertyId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getAssistantHousefileById" resultType="com.bdcourtyard.business.housing.model.AssistantHousefile">
+		SELECT
+		<include refid="columns" />
+		FROM assistant_housefile
+		WHERE
+		propertyId = #{propertyId}  AND
+		fileId = #{fileId} 	</select>
+
+	<!-- selsect -->
+	<select id="getAssistantHousefiles" resultType="com.bdcourtyard.business.housing.model.AssistantHousefile">
+		SELECT
+		<include refid="columns" />
+		FROM assistant_housefile
+		<include refid="where_sql" />
+	</select>
+
+	<!-- selsect -->
+	<select id="getAssistantHousefilesForPage" resultType="com.bdcourtyard.business.housing.model.AssistantHousefile">
+		SELECT
+		<include refid="columns" />
+		FROM assistant_housefile
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getAssistantHousefilesByConditions" resultType="com.bdcourtyard.business.housing.model.AssistantHousefile">
+		SELECT
+		<include refid="columns" />
+		FROM assistant_housefile
+		WHERE
+		1 =1
+		<foreach collection="conditions" item="condition">
+			${condition.exp}
+		</foreach>
+	</select>
+
+	<select id="findUrlByPropertyIdAndFileType" resultType="java.lang.String">
+		SELECT fileUrl
+		FROM system_file sf
+		WHERE fileId IN
+			(SELECT fileId FROM assistant_housefile WHERE propertyId = #{propertyId} AND fileType = #{fileType})
+	</select>
+</mapper>

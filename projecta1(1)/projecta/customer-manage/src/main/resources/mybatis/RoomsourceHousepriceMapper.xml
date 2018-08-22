@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.houseprice.dao.RoomsourceHousepriceDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		housePriceId,priceName,buildingId,unitId,typeId,storey,storeyPrice,orientationPrice,degreePrice,orientation,degree,originalPrice,price,totalPrice,estateId,employeeId,discountId,creatTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertRoomsourceHouseprice">
+	    <![CDATA[
+	        INSERT INTO roomsource_houseprice ( 
+	        	housePriceId,priceName,buildingId,unitId,typeId,storey,storeyPrice,orientationPrice,degreePrice,orientation,degree,originalPrice,price,totalPrice,estateId,employeeId,discountId,creatTime
+	        ) VALUES (
+	        	#{housePriceId} ,
+	        	#{priceName} ,
+	        	#{buildingId} ,
+	        	#{unitId} ,
+	        	#{typeId} ,
+	        	#{storey} ,
+	        	#{storeyPrice} ,
+	        	#{orientationPrice} ,
+	        	#{degreePrice} ,
+	        	#{orientation} ,
+	        	#{degree} ,
+	        	#{originalPrice} ,
+	        	#{price} ,
+	        	#{totalPrice} ,
+	        	#{estateId} ,
+	        	#{employeeId} ,
+	        	#{discountId} ,
+	        	#{creatTime} 
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertRoomsourceHousepriceBatch">
+	    <![CDATA[
+	        INSERT INTO roomsource_houseprice (
+	        	housePriceId,priceName,buildingId,unitId,typeId,storey,storeyPrice,orientationPrice,degreePrice,orientation,degree,originalPrice,price,totalPrice,estateId,employeeId,discountId,creatTime
+	        ) VALUES 
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+						#{item.housePriceId} ,
+						#{item.priceName} ,
+						#{item.buildingId} ,
+						#{item.unitId} ,
+						#{item.typeId} ,
+						#{item.storey} ,
+						#{item.storeyPrice} ,
+						#{item.orientationPrice} ,
+						#{item.degreePrice} ,
+						#{item.orientation} ,
+						#{item.degree} ,
+						#{item.originalPrice} ,
+						#{item.price} ,
+						#{item.totalPrice} ,
+						#{item.estateId} ,
+						#{item.employeeId} ,
+						#{item.discountId} ,
+						#{item.creatTime} 
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+				test="priceName != null and priceName != ''">
+				priceName = #{priceName}
+				,
+			</if>
+			<if
+				test="buildingId != null and buildingId != ''">
+				buildingId = #{buildingId}
+				,
+			</if>
+			<if
+				test="unitId != null and unitId != ''">
+				unitId = #{unitId}
+				,
+			</if>
+			<if
+				test="typeId != null and typeId != ''">
+				typeId = #{typeId}
+				,
+			</if>
+			<if
+				test="storey != null and storey != ''">
+				storey = #{storey}
+				,
+			</if>
+			<if test="storeyPrice != null">
+				storeyPrice = #{storeyPrice} ,
+			</if>
+			<if test="orientationPrice != null">
+				orientationPrice = #{orientationPrice} ,
+			</if>
+			<if test="degreePrice != null">
+				degreePrice = #{degreePrice} ,
+			</if>
+			<if
+				test="orientation != null and orientation != ''">
+				orientation = #{orientation}
+				,
+			</if>
+			<if test="degree != null">
+				degree = #{degree} ,
+			</if>
+			<if test="originalPrice != null">
+				originalPrice = #{originalPrice} ,
+			</if>
+			<if test="price != null">
+				price = #{price} ,
+			</if>
+			<if test="totalPrice != null">
+				totalPrice = #{totalPrice} ,
+			</if>
+			<if
+				test="estateId != null and estateId != ''">
+				estateId = #{estateId}
+				,
+			</if>
+			<if
+				test="employeeId != null and employeeId != ''">
+				employeeId = #{employeeId}
+				,
+			</if>
+			<if
+				test="discountId != null and discountId != ''">
+				discountId = #{discountId}
+				,
+			</if>
+			<if test="creatTime != null">
+				creatTime = #{creatTime} 
+			</if>
+		</set>
+	</sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+				test="roomsourceHouseprice.priceName != null and roomsourceHouseprice.priceName != ''">
+				priceName = #{roomsourceHouseprice.priceName}				 
+			</if>
+			<if
+				test="roomsourceHouseprice.buildingId != null and roomsourceHouseprice.buildingId != ''">
+				 and buildingId = #{roomsourceHouseprice.buildingId}				 
+			</if>
+			<if
+				test="roomsourceHouseprice.unitId != null and roomsourceHouseprice.unitId != ''">
+				 and unitId = #{roomsourceHouseprice.unitId}				 
+			</if>
+			<if
+				test="roomsourceHouseprice.typeId != null and roomsourceHouseprice.typeId != ''">
+				 and typeId = #{roomsourceHouseprice.typeId}				 
+			</if>
+			<if
+				test="roomsourceHouseprice.storey != null and roomsourceHouseprice.storey != ''">
+				 and storey = #{roomsourceHouseprice.storey}				 
+			</if>
+			<if test="roomsourceHouseprice.storeyPrice != null">
+				 and  storeyPrice = #{roomsourceHouseprice.storeyPrice} 
+			</if>
+			<if test="roomsourceHouseprice.orientationPrice != null">
+				 and  orientationPrice = #{roomsourceHouseprice.orientationPrice} 
+			</if>
+			<if test="roomsourceHouseprice.degreePrice != null">
+				 and  degreePrice = #{roomsourceHouseprice.degreePrice} 
+			</if>
+			<if
+				test="roomsourceHouseprice.orientation != null and roomsourceHouseprice.orientation != ''">
+				 and orientation = #{roomsourceHouseprice.orientation}				 
+			</if>
+			<if test="roomsourceHouseprice.degree != null">
+				 and  degree = #{roomsourceHouseprice.degree} 
+			</if>
+			<if test="roomsourceHouseprice.originalPrice != null">
+				 and  originalPrice = #{roomsourceHouseprice.originalPrice} 
+			</if>
+			<if test="roomsourceHouseprice.price != null">
+				 and  price = #{roomsourceHouseprice.price} 
+			</if>
+			<if test="roomsourceHouseprice.totalPrice != null">
+				 and  totalPrice = #{roomsourceHouseprice.totalPrice} 
+			</if>
+			<if
+				test="roomsourceHouseprice.estateId != null and roomsourceHouseprice.estateId != ''">
+				 and estateId = #{roomsourceHouseprice.estateId}				 
+			</if>
+			<if
+				test="roomsourceHouseprice.employeeId != null and roomsourceHouseprice.employeeId != ''">
+				 and employeeId = #{roomsourceHouseprice.employeeId}				 
+			</if>
+			<if
+				test="roomsourceHouseprice.discountId != null and roomsourceHouseprice.discountId != ''">
+				 and discountId = #{roomsourceHouseprice.discountId}				 
+			</if>
+			<if test="roomsourceHouseprice.creatTime != null">
+				 and creatTime = #{roomsourceHouseprice.creatTime} 
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateRoomsourceHousepriceById">
+		UPDATE roomsource_houseprice
+		<include refid="update_sql" />
+		WHERE
+		housePriceId =
+		#{housePriceId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteRoomsourceHousepriceById">
+		DELETE FROM roomsource_houseprice
+		WHERE
+		housePriceId = #{housePriceId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getRoomsourceHousepriceById" resultType="com.bdcourtyard.business.houseprice.model.RoomsourceHouseprice">
+		SELECT
+		<include refid="columns" />
+		FROM roomsource_houseprice
+		WHERE
+		housePriceId = #{housePriceId} 	</select>
+
+	<!-- selsect -->
+	<select id="getRoomsourceHouseprices" resultType="com.bdcourtyard.business.houseprice.model.RoomsourceHouseprice">
+		SELECT
+		<include refid="columns" />
+		FROM roomsource_houseprice
+		<include refid="where_sql" />
+	</select>
+	
+			<!-- selsect -->
+	<select id="getRoomsourceHousepricesForPage" resultType="com.bdcourtyard.business.houseprice.vo.RoomsourceHousepricePage">
+		SELECT a.*,b.buildingName,c.unitName,d.floorArea
+		FROM roomsource_houseprice a left join house_building b on a.buildingId=b.buildingId left join house_building_unit c on
+		a.unitId=c.unitId left join house_type d on d.typeId=a.typeId
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getRoomsourceHousepricesByConditions" resultType="com.bdcourtyard.business.houseprice.vo.RoomsourceHousepricePage">
+		SELECT a.*,b.buildingName,c.unitName,d.floorArea
+		FROM roomsource_houseprice a left join house_building b on a.buildingId=b.buildingId left join house_building_unit c on
+		a.unitId=c.unitId left join house_type d on d.typeId=a.typeId
+		WHERE 
+			1 =1
+		<foreach collection="conditions" item="condition">
+			#{condition.exp}
+		</foreach>
+	</select>
+	<select id="getRoomsourceHousepricesByIs" parameterType="java.lang.String"
+			resultType="com.bdcourtyard.business.houseprice.model.RoomsourceHouseprice">
+		select
+		*
+		from roomsource_houseprice
+		where 1=1
+		<choose>
+			<when test="buildingId == null or buildingId == ''">
+				AND buildingId is NULL
+			</when>
+			<otherwise>
+				AND buildingId = #{buildingId}
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="unitId == null or unitId == ''">
+				AND unitId is NULL
+			</when>
+			<otherwise>
+				AND unitId = #{unitId}
+			</otherwise>
+		</choose>
+	</select>
+</mapper>

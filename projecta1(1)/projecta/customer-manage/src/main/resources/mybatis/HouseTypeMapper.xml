@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.housetype.dao.HouseTypeDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		typeId,typeNo,typeName,employeeId,typeDesc,floorArea,interFloorArea,fileId,createTime,estateId
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertHouseType">
+	    <![CDATA[
+	        INSERT INTO house_type ( 
+	        	typeId,typeNo,typeName,employeeId,typeDesc,floorArea,interFloorArea,fileId,createTime,estateId
+	        ) VALUES (
+	        	#{typeId} ,
+	        	#{typeNo} ,
+	        	#{typeName} ,
+	        	#{employeeId} ,
+	        	#{typeDesc} ,
+	        	#{floorArea} ,
+	        	#{interFloorArea} ,
+	        	#{fileId} ,
+	        	#{createTime} ,
+	        	#{estateId} 
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertHouseTypeBatch">
+	    <![CDATA[
+	        INSERT INTO house_type (
+	        	typeId,typeNo,typeName,employeeId,typeDesc,floorArea,interFloorArea,fileId,createTime,estateId
+	        ) VALUES 
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+						#{item.typeId} ,
+						#{item.typeNo} ,
+						#{item.typeName} ,
+						#{item.employeeId} ,
+						#{item.typeDesc} ,
+						#{item.floorArea} ,
+						#{item.interFloorArea} ,
+						#{item.fileId} ,
+						#{item.createTime} ,
+						#{item.estateId} 
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+				test="typeNo != null and typeNo != ''">
+				typeNo = #{typeNo}
+				,
+			</if>
+			<if
+				test="typeName != null and typeName != ''">
+				typeName = #{typeName}
+				,
+			</if>
+			<if
+				test="employeeId != null and employeeId != ''">
+				employeeId = #{employeeId}
+				,
+			</if>
+			<if
+				test="typeDesc != null and typeDesc != ''">
+				typeDesc = #{typeDesc}
+				,
+			</if>
+			<if test="floorArea != null">
+				floorArea = #{floorArea} ,
+			</if>
+			<if test="interFloorArea != null">
+				interFloorArea = #{interFloorArea} ,
+			</if>
+			<if
+				test="fileId != null and fileId != ''">
+				fileId = #{fileId}
+				,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime} ,
+			</if>
+			<if
+				test="estateId != null and estateId != ''">
+				estateId = #{estateId}
+				
+			</if>
+		</set>
+	</sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+				test="houseType.typeNo != null and houseType.typeNo != ''">
+				typeNo = #{houseType.typeNo}				 
+			</if>
+			<if
+				test="houseType.typeName != null and houseType.typeName != ''">
+				 and typeName = #{houseType.typeName}				 
+			</if>
+			<if
+				test="houseType.employeeId != null and houseType.employeeId != ''">
+				 and employeeId = #{houseType.employeeId}				 
+			</if>
+			<if
+				test="houseType.typeDesc != null and houseType.typeDesc != ''">
+				 and typeDesc = #{houseType.typeDesc}				 
+			</if>
+			<if test="houseType.floorArea != null">
+				 and  floorArea = #{houseType.floorArea} 
+			</if>
+			<if test="houseType.interFloorArea != null">
+				 and  interFloorArea = #{houseType.interFloorArea} 
+			</if>
+			<if
+				test="houseType.fileId != null and houseType.fileId != ''">
+				 and fileId = #{houseType.fileId}				 
+			</if>
+			<if test="houseType.createTime != null">
+				 and createTime = #{houseType.createTime} 
+			</if>
+			<if
+				test="houseType.estateId != null and houseType.estateId != ''">
+				 and estateId = #{houseType.estateId}				 
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateHouseTypeById">
+		UPDATE house_type
+		<include refid="update_sql" />
+		WHERE
+		typeId =
+		#{typeId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteHouseTypeById">
+		DELETE FROM house_type
+		WHERE
+		typeId = #{typeId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getHouseTypeById" resultType="com.bdcourtyard.business.housetype.model.HouseType">
+		SELECT
+		<include refid="columns" />
+		FROM house_type
+		WHERE
+		typeId = #{typeId} 	</select>
+
+	<!-- selsect -->
+	<select id="getHouseTypes" parameterType="com.bdcourtyard.business.housetype.domain.FindAllTypesReq"
+			resultType="com.bdcourtyard.business.housetype.domain.FindAllTypesResp">
+		SELECT
+		t.typeNo,t.typeName,t.createTime,t.typeId,
+		(SELECT e.employeeName FROM company_employee e WHERE e.employeeId = t.employeeId) empName
+		FROM house_type t
+		WHERE t.estateId = #{estateId}
+		<if test="startTime != null and startTime != ''">
+			AND DATE_FORMAT(t.createTime,'%Y-%m-%d') &gt;= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			AND DATE_FORMAT(t.createTime,'%Y-%m-%d') &lt;= #{endTime}
+		</if>
+		<if test="typeName != null and typeName != ''">
+			AND t.typeName LIKE CONCAT('%',#{typeName},'%')
+		</if>
+		ORDER BY t.createTime DESC
+	</select>
+	
+			<!-- selsect -->
+	<select id="getHouseTypesForPage" resultType="com.bdcourtyard.business.housetype.model.HouseType">
+		SELECT
+		<include refid="columns" />
+		FROM house_type
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getHouseTypesByConditions" resultType="com.bdcourtyard.business.housetype.model.HouseType">
+		SELECT
+		<include refid="columns" />
+		FROM house_type
+		WHERE 
+			1 =1
+		<foreach collection="conditions" item="condition">
+			${condition.exp}
+		</foreach>
+	</select>
+
+	<select id="findByNameAndEstateId" parameterType="java.lang.String" resultType="com.bdcourtyard.business.housetype.model.HouseType">
+		SELECT * FROM house_type WHERE estateId = #{estateId} AND typeName = #{typeName}
+	</select>
+
+	<select id="findByTypeId" parameterType="java.lang.String" resultType="com.bdcourtyard.business.housetype.domain.FindTypeResp">
+		SELECT typeId,typeNo,typeName,typeDesc,floorArea,interFloorArea,createTime,
+		(SELECT sf.fileUrl FROM system_file sf WHERE sf.fileId = t.fileId) fileUrl,
+		(SELECT sf.fileName FROM system_file sf WHERE sf.fileId = t.fileId) fileName
+		FROM house_type t WHERE t.typeId = #{typeId}
+	</select>
+
+	<delete id="deleteByIds" parameterType="java.lang.String">
+		DELETE FROM house_type WHERE typeId IN
+		<foreach collection="array" item="typeId" open="(" separator="," close=")">
+			#{typeId}
+		</foreach>
+	</delete>
+
+	<select id="findByEstateId" parameterType="java.lang.String"
+			resultType="com.bdcourtyard.business.housetype.model.HouseType">
+		SELECT * FROM house_type WHERE estateId = #{estateId}
+	</select>
+</mapper>

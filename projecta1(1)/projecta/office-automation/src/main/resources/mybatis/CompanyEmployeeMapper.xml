@@ -1,0 +1,708 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.account.dao.CompanyEmployeeDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		employeeId,employeeNo,companyId,employeeName,idNum,gender,birthday,photo,nationality,ethnic,residency,height,weight,maritalStatus,politicalStatus,highestEducation,graduatedFrom,major,graduatedDate,departmentId,employType,workDate,onBoardDate,address,phoneNum,email,isRegular,regularDate,emergencyContactPerson,emergencyContactNumber,isEnableAccount,roleId,createTime,updateTime,head,estateId
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertCompanyEmployee">
+	    <![CDATA[
+	        INSERT INTO company_employee ( 
+	        	employeeId,employeeNo,companyId,employeeName,idNum,gender,birthday,photo,nationality,ethnic,residency,height,weight,maritalStatus,politicalStatus,highestEducation,graduatedFrom,major,graduatedDate,departmentId,employType,workDate,onBoardDate,address,phoneNum,email,isRegular,regularDate,emergencyContactPerson,emergencyContactNumber,isEnableAccount,roleId,createTime,updateTime,head,estateId
+	        ) VALUES (
+	        	#{employeeId} ,
+	        	#{employeeNo} ,
+	        	#{companyId} ,
+	        	#{employeeName} ,
+	        	#{idNum} ,
+	        	#{gender} ,
+	        	#{birthday} ,
+	        	#{photo} ,
+	        	#{nationality} ,
+	        	#{ethnic} ,
+	        	#{residency} ,
+	        	#{height} ,
+	        	#{weight} ,
+	        	#{maritalStatus} ,
+	        	#{politicalStatus} ,
+	        	#{highestEducation} ,
+	        	#{graduatedFrom} ,
+	        	#{major} ,
+	        	#{graduatedDate} ,
+	        	#{departmentId} ,
+	        	#{employType} ,
+	        	#{workDate} ,
+	        	#{onBoardDate} ,
+	        	#{address} ,
+	        	#{phoneNum} ,
+	        	#{email} ,
+	        	#{isRegular} ,
+	        	#{regularDate} ,
+	        	#{emergencyContactPerson} ,
+	        	#{emergencyContactNumber} ,
+	        	#{isEnableAccount} ,
+	        	#{roleId} ,
+	        	#{createTime} ,
+	        	#{updateTime} ,
+	        	#{head} ,
+	        	#{estateId} 
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertCompanyEmployeeBatch">
+	    <![CDATA[
+	        INSERT INTO company_employee (
+	        	employeeId,employeeNo,companyId,employeeName,idNum,gender,birthday,photo,nationality,ethnic,residency,height,weight,maritalStatus,politicalStatus,highestEducation,graduatedFrom,major,graduatedDate,departmentId,employType,workDate,onBoardDate,address,phoneNum,email,isRegular,regularDate,emergencyContactPerson,emergencyContactNumber,isEnableAccount,roleId,createTime,updateTime,head,estateId
+	        ) VALUES 
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+						#{item.employeeId} ,
+						#{item.employeeNo} ,
+						#{item.companyId} ,
+						#{item.employeeName} ,
+						#{item.idNum} ,
+						#{item.gender} ,
+						#{item.birthday} ,
+						#{item.photo} ,
+						#{item.nationality} ,
+						#{item.ethnic} ,
+						#{item.residency} ,
+						#{item.height} ,
+						#{item.weight} ,
+						#{item.maritalStatus} ,
+						#{item.politicalStatus} ,
+						#{item.highestEducation} ,
+						#{item.graduatedFrom} ,
+						#{item.major} ,
+						#{item.graduatedDate} ,
+						#{item.departmentId} ,
+						#{item.employType} ,
+						#{item.workDate} ,
+						#{item.onBoardDate} ,
+						#{item.address} ,
+						#{item.phoneNum} ,
+						#{item.email} ,
+						#{item.isRegular} ,
+						#{item.regularDate} ,
+						#{item.emergencyContactPerson} ,
+						#{item.emergencyContactNumber} ,
+						#{item.isEnableAccount} ,
+						#{item.roleId} ,
+						#{item.createTime} ,
+						#{item.updateTime} ,
+						#{item.head} ,
+						#{item.estateId} 
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+				test="employeeNo != null and employeeNo != ''">
+				employeeNo = #{employeeNo}
+				,
+			</if>
+			<if
+				test="companyId != null and companyId != ''">
+				companyId = #{companyId}
+				,
+			</if>
+			<if
+				test="employeeName != null and employeeName != ''">
+				employeeName = #{employeeName}
+				,
+			</if>
+			<if
+				test="idNum != null and idNum != ''">
+				idNum = #{idNum}
+				,
+			</if>
+			<if test="gender != null">
+				gender = #{gender} ,
+			</if>
+			<if test="birthday != null">
+				birthday = #{birthday} ,
+			</if>
+			<if
+				test="photo != null and photo != ''">
+				photo = #{photo}
+				,
+			</if>
+			<if
+				test="nationality != null and nationality != ''">
+				nationality = #{nationality}
+				,
+			</if>
+			<if
+				test="ethnic != null and ethnic != ''">
+				ethnic = #{ethnic}
+				,
+			</if>
+			<if
+				test="residency != null and residency != ''">
+				residency = #{residency}
+				,
+			</if>
+			<if test="height != null">
+				height = #{height} ,
+			</if>
+			<if test="weight != null">
+				weight = #{weight} ,
+			</if>
+			<if test="maritalStatus != null">
+				maritalStatus = #{maritalStatus} ,
+			</if>
+			<if test="politicalStatus != null">
+				politicalStatus = #{politicalStatus} ,
+			</if>
+			<if test="highestEducation != null">
+				highestEducation = #{highestEducation} ,
+			</if>
+			<if
+				test="graduatedFrom != null and graduatedFrom != ''">
+				graduatedFrom = #{graduatedFrom}
+				,
+			</if>
+			<if
+				test="major != null and major != ''">
+				major = #{major}
+				,
+			</if>
+			<if test="graduatedDate != null">
+				graduatedDate = #{graduatedDate} ,
+			</if>
+			<if
+				test="departmentId != null and departmentId != ''">
+				departmentId = #{departmentId}
+				,
+			</if>
+			<if test="employType != null">
+				employType = #{employType} ,
+			</if>
+			<if test="workDate != null">
+				workDate = #{workDate} ,
+			</if>
+			<if test="onBoardDate != null">
+				onBoardDate = #{onBoardDate} ,
+			</if>
+			<if
+				test="address != null and address != ''">
+				address = #{address}
+				,
+			</if>
+			<if
+				test="phoneNum != null and phoneNum != ''">
+				phoneNum = #{phoneNum}
+				,
+			</if>
+			<if
+				test="email != null and email != ''">
+				email = #{email}
+				,
+			</if>
+			<if test="isRegular != null">
+				isRegular = #{isRegular} ,
+			</if>
+			<if test="regularDate != null">
+				regularDate = #{regularDate} ,
+			</if>
+			<if
+				test="emergencyContactPerson != null and emergencyContactPerson != ''">
+				emergencyContactPerson = #{emergencyContactPerson}
+				,
+			</if>
+			<if
+				test="emergencyContactNumber != null and emergencyContactNumber != ''">
+				emergencyContactNumber = #{emergencyContactNumber}
+				,
+			</if>
+			<if test="isEnableAccount != null">
+				isEnableAccount = #{isEnableAccount} ,
+			</if>
+			<if
+				test="roleId != null and roleId != ''">
+				roleId = #{roleId}
+				,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime} ,
+			</if>
+			<if test="updateTime != null">
+				updateTime = #{updateTime} ,
+			</if>
+			<if
+				test="head != null and head != ''">
+				head = #{head}
+				,
+			</if>
+			<if
+				test="estateId != null and estateId != ''">
+				estateId = #{estateId}
+				
+			</if>
+		</set>
+	</sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+				test="companyEmployee.employeeNo != null and companyEmployee.employeeNo != ''">
+				employeeNo = #{companyEmployee.employeeNo}				 
+			</if>
+			<if
+				test="companyEmployee.companyId != null and companyEmployee.companyId != ''">
+				 and companyId = #{companyEmployee.companyId}				 
+			</if>
+			<if
+				test="companyEmployee.employeeName != null and companyEmployee.employeeName != ''">
+				 and employeeName = #{companyEmployee.employeeName}				 
+			</if>
+			<if
+				test="companyEmployee.idNum != null and companyEmployee.idNum != ''">
+				 and idNum = #{companyEmployee.idNum}				 
+			</if>
+			<if test="companyEmployee.gender != null">
+				 and  gender = #{companyEmployee.gender} 
+			</if>
+			<if test="companyEmployee.birthday != null">
+				 and birthday = #{companyEmployee.birthday} 
+			</if>
+			<if
+				test="companyEmployee.photo != null and companyEmployee.photo != ''">
+				 and photo = #{companyEmployee.photo}				 
+			</if>
+			<if
+				test="companyEmployee.nationality != null and companyEmployee.nationality != ''">
+				 and nationality = #{companyEmployee.nationality}				 
+			</if>
+			<if
+				test="companyEmployee.ethnic != null and companyEmployee.ethnic != ''">
+				 and ethnic = #{companyEmployee.ethnic}				 
+			</if>
+			<if
+				test="companyEmployee.residency != null and companyEmployee.residency != ''">
+				 and residency = #{companyEmployee.residency}				 
+			</if>
+			<if test="companyEmployee.height != null">
+				 and  height = #{companyEmployee.height} 
+			</if>
+			<if test="companyEmployee.weight != null">
+				 and  weight = #{companyEmployee.weight} 
+			</if>
+			<if test="companyEmployee.maritalStatus != null">
+				 and  maritalStatus = #{companyEmployee.maritalStatus} 
+			</if>
+			<if test="companyEmployee.politicalStatus != null">
+				 and  politicalStatus = #{companyEmployee.politicalStatus} 
+			</if>
+			<if test="companyEmployee.highestEducation != null">
+				 and  highestEducation = #{companyEmployee.highestEducation} 
+			</if>
+			<if
+				test="companyEmployee.graduatedFrom != null and companyEmployee.graduatedFrom != ''">
+				 and graduatedFrom = #{companyEmployee.graduatedFrom}				 
+			</if>
+			<if
+				test="companyEmployee.major != null and companyEmployee.major != ''">
+				 and major = #{companyEmployee.major}				 
+			</if>
+			<if test="companyEmployee.graduatedDate != null">
+				 and graduatedDate = #{companyEmployee.graduatedDate} 
+			</if>
+			<if
+				test="companyEmployee.departmentId != null and companyEmployee.departmentId != ''">
+				 and departmentId = #{companyEmployee.departmentId}				 
+			</if>
+			<if test="companyEmployee.employType != null">
+				 and  employType = #{companyEmployee.employType} 
+			</if>
+			<if test="companyEmployee.workDate != null">
+				 and workDate = #{companyEmployee.workDate} 
+			</if>
+			<if test="companyEmployee.onBoardDate != null">
+				 and onBoardDate = #{companyEmployee.onBoardDate} 
+			</if>
+			<if
+				test="companyEmployee.address != null and companyEmployee.address != ''">
+				 and address = #{companyEmployee.address}				 
+			</if>
+			<if
+				test="companyEmployee.phoneNum != null and companyEmployee.phoneNum != ''">
+				 and phoneNum = #{companyEmployee.phoneNum}				 
+			</if>
+			<if
+				test="companyEmployee.email != null and companyEmployee.email != ''">
+				 and email = #{companyEmployee.email}				 
+			</if>
+			<if test="companyEmployee.isRegular != null">
+				 and  isRegular = #{companyEmployee.isRegular} 
+			</if>
+			<if test="companyEmployee.regularDate != null">
+				 and regularDate = #{companyEmployee.regularDate} 
+			</if>
+			<if
+				test="companyEmployee.emergencyContactPerson != null and companyEmployee.emergencyContactPerson != ''">
+				 and emergencyContactPerson = #{companyEmployee.emergencyContactPerson}				 
+			</if>
+			<if
+				test="companyEmployee.emergencyContactNumber != null and companyEmployee.emergencyContactNumber != ''">
+				 and emergencyContactNumber = #{companyEmployee.emergencyContactNumber}				 
+			</if>
+			<if test="companyEmployee.isEnableAccount != null">
+				 and  isEnableAccount = #{companyEmployee.isEnableAccount} 
+			</if>
+			<if
+				test="companyEmployee.roleId != null and companyEmployee.roleId != ''">
+				 and roleId = #{companyEmployee.roleId}				 
+			</if>
+			<if test="companyEmployee.createTime != null">
+				 and createTime = #{companyEmployee.createTime} 
+			</if>
+			<if test="companyEmployee.updateTime != null">
+				 and updateTime = #{companyEmployee.updateTime} 
+			</if>
+			<if
+				test="companyEmployee.head != null and companyEmployee.head != ''">
+				 and head = #{companyEmployee.head}				 
+			</if>
+			<if
+				test="companyEmployee.estateId != null and companyEmployee.estateId != ''">
+				 and estateId = #{companyEmployee.estateId}				 
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateCompanyEmployeeById">
+		UPDATE company_employee
+		<include refid="update_sql" />
+		WHERE
+		employeeId =
+		#{employeeId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteCompanyEmployeeById">
+		DELETE FROM company_employee
+		WHERE
+		employeeId = #{employeeId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getCompanyEmployeeById" resultType="com.bdcourtyard.business.account.model.CompanyEmployee">
+		SELECT
+		<include refid="columns" />
+		FROM company_employee
+		WHERE
+		employeeId = #{employeeId} 	</select>
+
+	<!-- selsect -->
+	<select id="getCompanyEmployees" resultType="com.bdcourtyard.business.account.domain.FindAllEmpResp"
+		parameterType="com.bdcourtyard.business.account.domain.FindAllEmpDaoReq">
+		SELECT
+		ce.employeeId,ce.employeeNo,ce.employeeName,ce.gender,ce.employType,ce.phoneNum,cd.departmentName
+		FROM company_employee ce
+		LEFT JOIN company_department cd ON ce.departmentId = cd.departmentId
+		<where>
+			ce.employeeId != '1'
+			<if test="employeeNo!=null and employeeNo!=''">
+				AND ce.employeeNo LIKE concat("%",#{employeeNo},"%")
+			</if>
+			<if test="departmentId!=null and departmentId!=''">
+				and cd.depId LIKE concat(#{depId},"%")
+			</if>
+			<if test="employeeName!=null and employeeName!=''">
+				AND ce.employeeName LIKE concat("%",#{employeeName},"%")
+			</if>
+			<if test="empType !=null and empType!=''">
+				AND ce.employType = #{empType}
+			</if>
+			<if test="phone!=null and phone!=''">
+				AND ce.phoneNum LIKE concat("%",#{phone},"%")
+			</if>
+			AND ce.estateId = #{estateId}
+		</where>
+		ORDER BY ce.createTime DESC
+	</select>
+	
+			<!-- selsect -->
+	<select id="getCompanyEmployeesForPage" resultType="com.bdcourtyard.business.account.model.CompanyEmployee">
+		SELECT
+		<include refid="columns" />
+		FROM company_employee
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getCompanyEmployeesByConditions" resultType="com.bdcourtyard.business.account.model.CompanyEmployee">
+		SELECT
+		<include refid="columns" />
+		FROM company_employee
+		WHERE 
+			1 =1
+		<foreach collection="conditions" item="condition">
+			${condition.exp}
+		</foreach>
+	</select>
+
+	<select id="findByDepIdAndType" resultType="com.bdcourtyard.business.account.model.CompanyEmployee">
+		SELECT *
+		FROM company_employee ce
+		LEFT JOIN company_department cd ON cd.departmentId = ce.departmentId
+		WHERE cd.depId LIKE concat(#{depId},"%") AND ce.estateId = #{estateId}
+		<if test="type == 1">
+			AND isEnableAccount = 1
+		</if>
+	</select>
+
+	<select id="selectByPhone" parameterType="java.lang.String"
+			resultType="com.bdcourtyard.business.account.model.CompanyEmployee">
+		SELECT * FROM company_employee ee
+		WHERE ee.phoneNum = #{phone} AND ee.estateId = #{estateId}
+	</select>
+
+	<select id="selectByEmployeeNum" resultType="com.bdcourtyard.business.account.model.CompanyEmployee">
+		SELECT ce.employeeNo
+		FROM company_employee ce
+		WHERE ce.employeeNo = #{employeeNo,jdbcType=VARCHAR}
+		AND ce.estateId = #{estateId}
+		limit 1
+	</select>
+
+	<delete id="deleteByEmpIds">
+		DELETE FROM company_employee WHERE
+		employeeId IN
+		<foreach collection="array" index="index" separator="," open="(" close=")" item="id">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="selectByEmpId" parameterType="java.lang.String"
+			resultType="com.bdcourtyard.business.account.domain.FindEmpResp">
+		SELECT ce.*,cd.departmentName,ea.password
+		FROM company_employee ce
+		LEFT JOIN company_department cd ON cd.departmentId = ce.departmentId
+		LEFT JOIN employee_account_rela r ON r.employeeId = ce.employeeId
+		LEFT JOIN employee_account ea ON ea.acctName = r.acctName
+		WHERE ce.employeeId = #{empId}
+	</select>
+
+	<update id="updateByPrimaryKeySelective" parameterType="com.bdcourtyard.business.account.model.CompanyEmployee">
+		update company_employee
+		<set>
+			<if test="employeeNo != null">
+				employeeNo = #{employeeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="companyId != null">
+				companyId = #{companyId,jdbcType=VARCHAR},
+			</if>
+			<if test="employeeName != null">
+				employeeName = #{employeeName,jdbcType=VARCHAR},
+			</if>
+			<if test="idNum != null">
+				idNum = #{idNum,jdbcType=VARCHAR},
+			</if>
+			<if test="gender != null">
+				gender = #{gender,jdbcType=BIT},
+			</if>
+			<if test="birthday != null">
+				birthday = #{birthday,jdbcType=TIMESTAMP},
+			</if>
+			<if test="nationality != null">
+				nationality = #{nationality,jdbcType=VARCHAR},
+			</if>
+			<if test="ethnic != null">
+				ethnic = #{ethnic,jdbcType=VARCHAR},
+			</if>
+			<if test="residency != null">
+				residency = #{residency,jdbcType=VARCHAR},
+			</if>
+			<if test="height != null">
+				height = #{height,jdbcType=DOUBLE},
+			</if>
+			<if test="weight != null">
+				weight = #{weight,jdbcType=DOUBLE},
+			</if>
+			<if test="maritalStatus != null">
+				maritalStatus = #{maritalStatus,jdbcType=BIT},
+			</if>
+			<if test="politicalStatus != null">
+				politicalStatus = #{politicalStatus,jdbcType=BIT},
+			</if>
+			<if test="highestEducation != null">
+				highestEducation = #{highestEducation,jdbcType=BIT},
+			</if>
+			<if test="graduatedFrom != null">
+				graduatedFrom = #{graduatedFrom,jdbcType=VARCHAR},
+			</if>
+			<if test="major != null">
+				major = #{major,jdbcType=VARCHAR},
+			</if>
+			<if test="graduatedDate != null">
+				graduatedDate = #{graduatedDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="graduatedDate == null">
+				graduatedDate = NULL ,
+			</if>
+			<if test="departmentId != null">
+				departmentId = #{departmentId,jdbcType=VARCHAR},
+			</if>
+			<if test="employType != null">
+				employType = #{employType,jdbcType=BIT},
+			</if>
+			<if test="workDate != null">
+				workDate = #{workDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="onBoardDate != null">
+				onBoardDate = #{onBoardDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="phoneNum != null">
+				phoneNum = #{phoneNum,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				email = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="isRegular != null">
+				isRegular = #{isRegular,jdbcType=BIT},
+			</if>
+			<if test="regularDate != null">
+				regularDate = #{regularDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="regularDate == null">
+				regularDate = NULL ,
+			</if>
+			<if test="emergencyContactPerson != null">
+				emergencyContactPerson = #{emergencyContactPerson,jdbcType=VARCHAR},
+			</if>
+			<if test="emergencyContactNumber != null">
+				emergencyContactNumber = #{emergencyContactNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="isEnableAccount != null">
+				isEnableAccount = #{isEnableAccount,jdbcType=BIT},
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				updateTime = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="photo != null">
+				photo = #{photo,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="photo == ''">
+				photo = "",
+			</if>
+			<if test="head != null">
+				head = #{head,jdbcType=VARCHAR},
+			</if>
+			<if test="roleId != null">
+				roleId = #{roleId,jdbcType=VARCHAR},
+			</if>
+			<if test="estateId != null">
+				estateId = #{estateId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where employeeId = #{employeeId,jdbcType=VARCHAR}
+	</update>
+
+	<select id="selectByEmpIds" parameterType="java.lang.String"
+			resultType="com.bdcourtyard.business.account.domain.FindEmpResp">
+		SELECT ce.*,cd.departmentName
+		FROM company_employee ce
+		LEFT JOIN company_department cd ON cd.departmentId = ce.departmentId
+		WHERE ce.employeeId IN
+		<foreach collection="array" item="empId" open="(" separator="," close=")">
+			#{empId}
+		</foreach>
+	</select>
+
+	<select id="selectByParams" parameterType="com.bdcourtyard.business.account.domain.ExportEmpDaoReq"
+			resultType="com.bdcourtyard.business.account.domain.FindEmpResp">
+		SELECT ce.*,cd.departmentName
+		FROM company_employee ce
+		LEFT JOIN company_department cd ON cd.departmentId = ce.departmentId
+		<where>
+			ce.employeeId != '1'
+			<if test="employeeNo!=null and employeeNo!=''">
+				AND ce.employeeNo LIKE concat("%",#{employeeNo},"%")
+			</if>
+			<if test="departmentId!=null and departmentId!=''">
+				and cd.depId LIKE concat(#{depId},"%")
+			</if>
+			<if test="employeeName!=null and employeeName!=''">
+				AND ce.employeeName LIKE concat("%",#{employeeName},"%")
+			</if>
+			<if test="empType !=null and empType!=''">
+				AND ce.employType = #{empType}
+			</if>
+			<if test="phone!=null and phone!=''">
+				AND ce.phoneNum LIKE concat("%",#{phone},"%")
+			</if>
+			AND ce.estateId = #{estateId}
+		</where>
+	</select>
+
+	<select id="selectByDepartmentId" resultType="com.bdcourtyard.business.account.domain.FindEmpByDeptResp">
+		SELECT
+		employeeId AS empId,
+		employeeNo AS empNo,
+		employeeName AS empName,
+		phoneNum AS empPhone
+		FROM company_employee
+		WHERE departmentId = #{departmentId}
+	</select>
+
+	<select id="findEmpByRoleId" parameterType="java.lang.String"
+			resultType="com.bdcourtyard.business.account.model.CompanyEmployee">
+		select
+		*
+		from company_employee ce
+		where ce.roleId = #{roleId}
+	</select>
+
+	<select id="findByAcctNameAndEstateId" parameterType="java.lang.String"
+			resultType="com.bdcourtyard.business.account.model.CompanyEmployee">
+		SELECT * FROM company_employee WHERE estateId = #{estateId} AND employeeId IN
+			(SELECT employeeId FROM employee_account_rela WHERE acctName = #{acctName})
+	</select>
+
+	<select id="findEmpNumUnderDepart" resultType="java.lang.Integer" parameterType="java.lang.String" >
+		select count(*) from company_employee e
+		left join company_department d on e.departmentId = d.departmentId
+		where d.depId LIKE concat(#{depId},"%") AND e.isEnableAccount = 1
+		AND e.estateId = #{estateId}
+	</select>
+
+	<select id="findByDepartmentId" resultType="com.bdcourtyard.business.account.model.CompanyEmployee"
+			parameterType="java.lang.String">
+		SELECT
+		*
+		FROM company_employee
+		WHERE departmentId = #{departmentId} AND isEnableAccount = 1
+		ORDER BY createTime DESC
+	</select>
+
+	<select id="findEmployee" resultType="com.bdcourtyard.business.contact.domain.FindEmployeeResp"
+			parameterType="java.lang.String" >
+		select e.employeeId,e.employeeName,d.departmentName,e.head,e.phoneNum
+		from company_employee e
+		left join company_department d on e.departmentId = d.departmentId
+		where e.employeeId = #{employeeId}
+	</select>
+</mapper>

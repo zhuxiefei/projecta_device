@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.onlineHouse.dao.AppOnlineHouseDao">
+
+
+	<select id="selectAllHouseInfo" resultType="com.bdcourtyard.business.onlineHouse.model.OnlineHouseSimpleInfo" >
+		<![CDATA[
+			select
+				temp.onlineId,temp.houseType,temp.adminId,temp.createTime,temp.fileId,sf.fileUrl
+			from (
+				select
+					aoh.onlineId,aoh.houseType,aoh.adminId,aoh.createTime,
+					(select fileId from assistant_onlinehousefile aohf where aohf.onlineId=aoh.onlineId and (aohf.sceneSort=1 || 1=1) limit 1,1	) as fileId
+				from
+					assistant_onlinehouse aoh
+			) temp left join system_file sf on temp.fileId = sf.fileId
+		]]>
+	</select>
+
+
+</mapper>

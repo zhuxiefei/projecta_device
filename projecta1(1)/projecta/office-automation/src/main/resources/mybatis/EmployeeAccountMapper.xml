@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.account.dao.EmployeeAccountDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		acctName,password,isInit,lastLoginTime,lastLoginIp,createTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertEmployeeAccount">
+	    <![CDATA[
+	        INSERT INTO employee_account ( 
+	        	acctName,password,isInit,lastLoginTime,lastLoginIp,createTime
+	        ) VALUES (
+	        	#{acctName} ,
+	        	#{password} ,
+	        	#{isInit} ,
+	        	#{lastLoginTime} ,
+	        	#{lastLoginIp} ,
+	        	#{createTime} 
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertEmployeeAccountBatch">
+	    <![CDATA[
+	        INSERT INTO employee_account (
+	        	acctName,password,isInit,lastLoginTime,lastLoginIp,createTime
+	        ) VALUES 
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+						#{item.acctName} ,
+						#{item.password} ,
+						#{item.isInit} ,
+						#{item.lastLoginTime} ,
+						#{item.lastLoginIp} ,
+						#{item.createTime} 
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+				test="password != null and password != ''">
+				password = #{password}
+				,
+			</if>
+			<if test="isInit != null">
+				isInit = #{isInit} ,
+			</if>
+			<if test="lastLoginTime != null">
+				lastLoginTime = #{lastLoginTime} ,
+			</if>
+			<if
+				test="lastLoginIp != null and lastLoginIp != ''">
+				lastLoginIp = #{lastLoginIp}
+				,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime} 
+			</if>
+		</set>
+	</sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+				test="employeeAccount.password != null and employeeAccount.password != ''">
+				password = #{employeeAccount.password}				 
+			</if>
+			<if test="employeeAccount.isInit != null">
+				 and  isInit = #{employeeAccount.isInit} 
+			</if>
+			<if test="employeeAccount.lastLoginTime != null">
+				 and lastLoginTime = #{employeeAccount.lastLoginTime} 
+			</if>
+			<if
+				test="employeeAccount.lastLoginIp != null and employeeAccount.lastLoginIp != ''">
+				 and lastLoginIp = #{employeeAccount.lastLoginIp}				 
+			</if>
+			<if test="employeeAccount.createTime != null">
+				 and createTime = #{employeeAccount.createTime} 
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateEmployeeAccountById">
+		UPDATE employee_account
+		<include refid="update_sql" />
+		WHERE
+		acctName =
+		#{acctName} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteEmployeeAccountById">
+		DELETE FROM employee_account
+		WHERE
+		acctName = #{acctName} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getEmployeeAccountById" resultType="com.bdcourtyard.business.account.model.EmployeeAccount">
+		SELECT
+		<include refid="columns" />
+		FROM employee_account
+		WHERE
+		acctName = #{acctName} 	</select>
+
+	<!-- selsect -->
+	<select id="getEmployeeAccounts" resultType="com.bdcourtyard.business.account.domain.FindAllAccountResp"
+		parameterType="com.bdcourtyard.business.account.domain.FindAllAccountDaoReq">
+		SELECT
+		ea.acctName AS acctName,
+		ce.employeeNo AS empNo,
+		ce.employeeName AS empName,
+		cd.departmentName AS depName,
+		ea.createTime AS createTime,
+		ce.isEnableAccount as isEnableAccount,
+		er.roleName AS roleName
+		FROM employee_account ea
+		LEFT JOIN employee_account_rela ear ON ear.acctName = ea.acctName
+		LEFT JOIN company_employee ce ON ce.employeeId = ear.employeeId
+		LEFT JOIN company_department cd ON cd.departmentId = ce.departmentId
+		LEFT JOIN employee_role er ON er.roleId = ce.roleId
+		<where>
+			ce.employeeId != "1"
+			AND ce.estateId = #{estateId}
+			<if test="empNo!=null and empNo!=''">
+				AND ce.employeeNo LIKE concat("%",#{empNo},"%")
+			</if>
+			<if test="empName!=null and empName!=''">
+				AND ce.employeeName LIKE concat("%",#{empName},"%")
+			</if>
+			<if test="departmentId!=null and departmentId!=''">
+				and cd.depId LIKE concat(#{depId},"%")
+			</if>
+			<if test="phoneNum!=null and phoneNum!=''">
+				AND ea.acctName LIKE concat("%",#{phoneNum},"%")
+			</if>
+			<if test="startTime != null and startTime != ''">
+				AND DATE_FORMAT(ea.createTime,'%Y-%m-%d') &gt;= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND DATE_FORMAT(ea.createTime,'%Y-%m-%d') &lt;= #{endTime}
+			</if>
+		</where>
+		ORDER BY ea.createTime DESC
+	</select>
+	
+			<!-- selsect -->
+	<select id="getEmployeeAccountsForPage" resultType="com.bdcourtyard.business.account.model.EmployeeAccount">
+		SELECT
+		<include refid="columns" />
+		FROM employee_account
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getEmployeeAccountsByConditions" resultType="com.bdcourtyard.business.account.model.EmployeeAccount">
+		SELECT
+		<include refid="columns" />
+		FROM employee_account
+		WHERE 
+			1 =1
+		<foreach collection="conditions" item="condition">
+			${condition.exp}
+		</foreach>
+	</select>
+
+	<delete id="deleteAccounts" parameterType="java.util.List">
+		DELETE  FROM employee_account WHERE acctName IN
+		<foreach collection="list" item="acctName" open="(" separator="," close=")">
+			#{acctName}
+		</foreach>
+	</delete>
+
+	<select id="findRoleList" parameterType="java.lang.String" resultType="com.bdcourtyard.business.account.domain.RoleInfo">
+		SELECT roleId,roleName FROM employee_role WHERE estateId = #{estateId} AND roleId != 1
+	</select>
+
+	<!-- selsect -->
+	<select id="getRoleIdByAcctNameAndEstateId" resultType="com.bdcourtyard.business.account.model.CompanyEmployee">
+		select ce.* from company_employee ce
+		left join employee_account_rela ear on ce.employeeId = ear.employeeId
+		where ear.acctName = #{acctName} and ce.estateId = #{estateId}
+	</select>
+
+	<select id="selectByAcctName" parameterType="java.lang.String"
+			resultType="com.bdcourtyard.business.account.model.CompanyEmployee">
+		SELECT
+		ce.*
+		FROM company_employee ce
+		WHERE ce.estateId = #{estateId}
+		AND ce.employeeId IN
+		(SELECT ear.employeeId FROM employee_account_rela ear WHERE ear.acctName = #{acctName})
+	</select>
+</mapper>

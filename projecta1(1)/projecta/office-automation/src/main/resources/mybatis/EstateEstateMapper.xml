@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.estate.dao.EstateEstateDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		estateId,estateName,createTime,fileId
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertEstateEstate">
+		<![CDATA[
+	        INSERT INTO estate_estate (
+	        	estateId,estateName,createTime,fileId
+	        ) VALUES (
+	        	#{estateId} ,
+	        	#{estateName} ,
+	        	#{createTime} ,
+	        	#{fileId}
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertEstateEstateBatch">
+		<![CDATA[
+	        INSERT INTO estate_estate (
+	        	estateId,estateName,createTime,fileId
+	        ) VALUES
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+			#{item.estateId} ,
+			#{item.estateName} ,
+			#{item.createTime} ,
+			#{item.fileId}
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+					test="estateName != null and estateName != ''">
+				estateName = #{estateName}
+				,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime} ,
+			</if>
+			<if
+					test="fileId != null and fileId != ''">
+				fileId = #{fileId}
+
+			</if>
+		</set>
+	</sql>
+
+	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+					test="estateEstate.estateName != null and estateEstate.estateName != ''">
+				estateName = #{estateEstate.estateName}
+			</if>
+			<if test="estateEstate.createTime != null">
+				and createTime = #{estateEstate.createTime}
+			</if>
+			<if
+					test="estateEstate.fileId != null and estateEstate.fileId != ''">
+				and fileId = #{estateEstate.fileId}
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateEstateEstateById">
+		UPDATE estate_estate
+		<include refid="update_sql" />
+		WHERE
+		estateId =
+		#{estateId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteEstateEstateById">
+		DELETE FROM estate_estate
+		WHERE
+		estateId = #{estateId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getEstateEstateById" resultType="com.bdcourtyard.business.estate.model.EstateEstate">
+		SELECT
+		<include refid="columns" />
+		FROM estate_estate
+		WHERE
+		estateId = #{estateId} 	</select>
+
+	<!-- selsect -->
+	<select id="getEstateEstates" resultType="com.bdcourtyard.business.estate.model.EstateEstate">
+		SELECT
+		<include refid="columns" />
+		FROM estate_estate
+		<include refid="where_sql" />
+	</select>
+
+	<!-- selsect -->
+	<select id="getEstateEstatesForPage" resultType="com.bdcourtyard.business.estate.model.EstateEstate">
+		SELECT
+		<include refid="columns" />
+		FROM estate_estate
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getEstateEstatesByConditions" resultType="com.bdcourtyard.business.estate.model.EstateEstate">
+		SELECT
+		<include refid="columns" />
+		FROM estate_estate
+		WHERE
+		1 =1
+		<foreach collection="conditions" item="condition">
+			${condition.exp}
+		</foreach>
+	</select>
+
+	<select id="findEstates" parameterType="java.lang.String"
+			resultType="com.bdcourtyard.business.estate.domain.FindEstatesResp">
+		SELECT
+			e.estateId,
+			e.estateName,
+			(SELECT f.fileUrl FROM system_file f WHERE f.fileId = e.fileId) fileUrl
+		FROM estate_estate e
+		WHERE e.estateId IN
+			(SELECT estateId FROM company_employee WHERE employeeId IN
+				(SELECT employeeId FROM employee_account_rela WHERE acctName = #{acctName}))
+	</select>
+</mapper>

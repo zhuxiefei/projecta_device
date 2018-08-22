@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bdcourtyard.business.account.dao.EmployeePrivilegeDao">
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		privilegeId,privilegeName,privilegeDesc,parentId,privilegeType,createTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insertEmployeePrivilege">
+	    <![CDATA[
+	        INSERT INTO employee_privilege ( 
+	        	privilegeId,privilegeName,privilegeDesc,parentId,privilegeType,createTime
+	        ) VALUES (
+	        	#{privilegeId} ,
+	        	#{privilegeName} ,
+	        	#{privilegeDesc} ,
+	        	#{parentId} ,
+	        	#{privilegeType} ,
+	        	#{createTime} 
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertEmployeePrivilegeBatch">
+	    <![CDATA[
+	        INSERT INTO employee_privilege (
+	        	privilegeId,privilegeName,privilegeDesc,parentId,privilegeType,createTime
+	        ) VALUES 
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+						#{item.privilegeId} ,
+						#{item.privilegeName} ,
+						#{item.privilegeDesc} ,
+						#{item.parentId} ,
+						#{item.privilegeType} ,
+						#{item.createTime} 
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if
+				test="privilegeName != null and privilegeName != ''">
+				privilegeName = #{privilegeName}
+				,
+			</if>
+			<if
+				test="privilegeDesc != null and privilegeDesc != ''">
+				privilegeDesc = #{privilegeDesc}
+				,
+			</if>
+			<if
+				test="parentId != null and parentId != ''">
+				parentId = #{parentId}
+				,
+			</if>
+			<if test="privilegeType != null">
+				privilegeType = #{privilegeType} ,
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime} 
+			</if>
+		</set>
+	</sql>
+
+    <!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<!-- where 条件组合 -->
+	<sql id="where_sql">
+		<where>
+			<if
+				test="employeePrivilege.privilegeName != null and employeePrivilege.privilegeName != ''">
+				privilegeName = #{employeePrivilege.privilegeName}				 
+			</if>
+			<if
+				test="employeePrivilege.privilegeDesc != null and employeePrivilege.privilegeDesc != ''">
+				 and privilegeDesc = #{employeePrivilege.privilegeDesc}				 
+			</if>
+			<if
+				test="employeePrivilege.parentId != null and employeePrivilege.parentId != ''">
+				 and parentId = #{employeePrivilege.parentId}				 
+			</if>
+			<if test="employeePrivilege.privilegeType != null">
+				 and  privilegeType = #{employeePrivilege.privilegeType} 
+			</if>
+			<if test="employeePrivilege.createTime != null">
+				 and createTime = #{employeePrivilege.createTime} 
+			</if>
+		</where>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="updateEmployeePrivilegeById">
+		UPDATE employee_privilege
+		<include refid="update_sql" />
+		WHERE
+		privilegeId =
+		#{privilegeId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="deleteEmployeePrivilegeById">
+		DELETE FROM employee_privilege
+		WHERE
+		privilegeId = #{privilegeId} 	</delete>
+
+
+
+	<!-- selsect -->
+	<select id="getEmployeePrivilegeById" resultType="com.bdcourtyard.business.account.model.EmployeePrivilege">
+		SELECT
+		<include refid="columns" />
+		FROM employee_privilege
+		WHERE
+		privilegeId = #{privilegeId} 	</select>
+
+	<!-- selsect -->
+	<select id="getEmployeePrivileges" resultType="com.bdcourtyard.business.account.model.EmployeePrivilege">
+		SELECT
+		<include refid="columns" />
+		FROM employee_privilege
+		<include refid="where_sql" />
+	</select>
+	
+			<!-- selsect -->
+	<select id="getEmployeePrivilegesForPage" resultType="com.bdcourtyard.business.account.model.EmployeePrivilege">
+		SELECT
+		<include refid="columns" />
+		FROM employee_privilege
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getEmployeePrivilegesByConditions" resultType="com.bdcourtyard.business.account.model.EmployeePrivilege">
+		SELECT
+		<include refid="columns" />
+		FROM employee_privilege
+		WHERE 
+			1 =1
+		<foreach collection="conditions" item="condition">
+			${condition.exp}
+		</foreach>
+	</select>
+
+	<!-- 查询roleId对应的权限 -->
+	<select id="getPrivilegesByRoleId" resultType="com.bdcourtyard.business.account.model.EmployeePrivilege">
+		select ep.* from employee_privilege ep
+		left join employee_role_privilege_rela rpr on ep.privilegeId = rpr.privilegeId
+		left join employee_role er on rpr.roleId = er.roleId
+		where er.roleId = #{roleId} and ep.privilegeType = #{privilegeType}
+	</select>
+
+	<!-- 查询roleId对应的某个系统的权限 -->
+	<select id="getPrivilegesByRoleIdAndParentId" resultType="com.bdcourtyard.business.account.model.EmployeePrivilege">
+		select ep.* from employee_privilege ep
+		left join employee_role_privilege_rela rpr on ep.privilegeId = rpr.privilegeId
+		left join employee_role er on rpr.roleId = er.roleId
+		where er.roleId = #{roleId} and ep.privilegeType = #{privilegeType} and ep.parentId = #{parentId}
+		ORDER BY ep.createTime ASC
+	</select>
+
+	<select id="findSystems" resultType="com.bdcourtyard.business.account.model.EmployeePrivilege">
+		SELECT p.*
+		FROM employee_privilege p
+		LEFT JOIN employee_role_privilege_rela r ON r.privilegeId = p.privilegeId
+		WHERE p.privilegeType = 4 AND r.roleId = #{roleId}
+	</select>
+
+	<select id="findPriIdByParentIds" resultType="java.lang.String">
+		SELECT privilegeId FROM employee_privilege WHERE privilegeType=3 AND parentId IN
+		<foreach collection="list" item="id" index="index" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+</mapper>
